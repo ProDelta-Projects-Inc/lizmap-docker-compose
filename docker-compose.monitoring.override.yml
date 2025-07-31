@@ -1,0 +1,29 @@
+# Override file to add monitoring capabilities to existing services
+version: '3.8'
+
+services:
+  web:
+    # Add nginx status endpoint
+    volumes:
+      - ./monitoring/nginx-metrics.conf:/etc/nginx/conf.d/metrics.conf:ro
+    labels:
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=8080"
+      - "prometheus.io/path=/nginx_status"
+
+  app:
+    labels:
+      - "prometheus.io/scrape=true"
+      - "prometheus.io/port=9000"
+    environment:
+      # Enable PHP-FPM status page
+      - PHP_FPM_STATUS_ENABLE=1
+
+  db:
+    labels:
+      - "prometheus.io/scrape=true"
+    # Ensure postgres exporter can connect
+    environment:
+      - POSTGRES_DB=lizmap
+      - POSTGRES_USER=lizmap
+      - POSTGRES_PASSWORD=lizmap1234!
