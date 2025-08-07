@@ -6,6 +6,7 @@
 /lizmap.dir/**/*.tif.aux.xml
 /lizmap.dir/**/*.tif.ovr
 .env
+.upload.env
 *.qgs~
 .cnab/
 /*.pem
