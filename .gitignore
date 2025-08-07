@@ -2,6 +2,10 @@
 .idea
 .DS_Store
 /lizmap
+/lizmap.dir/**/*.tif
+/lizmap.dir/**/*.tif.aux.xml
+/lizmap.dir/**/*.tif.ovr
 .env
 *.qgs~
 .cnab/
+/*.pem
