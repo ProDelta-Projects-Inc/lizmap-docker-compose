@@ -1,0 +1,15 @@
+{
+  "name": "lizmap-docker-compose-attachment-push",
+  "version": "1.0.0",
+  "description": "Uploads attachments to an EC2 server using SFTP",
+  "repository": "https://github.com/ProDelta-Projects-Inc/lizmap-docker-compose.git",
+  "license": "MIT",
+  "main": "./file-upload.js",
+  "scripts": {
+    "upload": "node ./file-upload.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "ssh2-sftp-client": "^12.0.1"
+  }
+}

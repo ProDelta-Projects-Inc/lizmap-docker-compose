@@ -92,6 +92,26 @@ In command line
 This will remove all previous configuration. You will have to reenter the configuration in Lizmap
 as for the first run.
 
+## Pushing Attachments
+
+Due to large files being too large, map attachments need to be pushed directly to the server.
+
+Add attachments to the project repo, ie. `./lizmap.dir/instances/:project_repo`.
+
+Ensure packages are installed:
+
+```
+yarn install
+```
+
+Add pem key to root level directory. Update .upload.env with environment variables. If uploading a single project, specify the specific directory. 
+
+Run upload script:
+
+```
+yarn upload
+```
+
 ## References
 
 For more information, refer to the [docker-compose documentation](https://docs.docker.com/compose/)
