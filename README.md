@@ -104,6 +104,8 @@ Ensure packages are installed:
 yarn install
 ```
 
+Add pem key to root level directory. Update .upload.env with environment variables. If uploading a single project, specify the specific directory. 
+
 Run upload script:
 
 ```
