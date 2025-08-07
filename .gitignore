@@ -9,3 +9,4 @@
 *.qgs~
 .cnab/
 /*.pem
+/node_modules
