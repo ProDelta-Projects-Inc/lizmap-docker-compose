@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="max" saveDateTime="2025-08-12T15:33:03" version="3.40.5-Bratislava" saveUserFull="Max Halleran" projectname="">
+<qgis saveUser="max" saveDateTime="2025-08-12T15:37:09" version="3.40.5-Bratislava" saveUserFull="Max Halleran" projectname="">
   <homePath path=""/>
   <title></title>
   <transaction mode="Disabled"/>
@@ -97,7 +97,7 @@
         </customproperties>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-layer legend_split_behavior="0" name="Google Satellite Hybrid" legend_exp="" source="http-header:referer=&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D%26key%3DAIzaSyD2NsKzhw6t8KLa60sB62ryr7r20mxaQto&amp;zmax=20&amp;zmin=0" checked="Qt::Checked" patch_size="-1,-1" id="_c2d82700_7ff2_4e82_af22_3dc013034df9" expanded="1" providerKey="wms">
+    <layer-tree-layer legend_split_behavior="0" name="Google Satellite Hybrid" legend_exp="" source="crs=EPSG:3857&amp;format&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D%26key%3DAIzaSyD2NsKzhw6t8KLa60sB62ryr7r20mxaQto&amp;zmax=20&amp;zmin=0&amp;http-header:referer=" checked="Qt::Checked" patch_size="-1,-1" id="_c2d82700_7ff2_4e82_af22_3dc013034df9" expanded="1" providerKey="wms">
       <customproperties>
         <Option/>
       </customproperties>
@@ -116,9 +116,9 @@
   <snapping-settings minScale="0" maxScale="0" unit="1" mode="2" intersection-snapping="0" self-snapping="0" tolerance="12" type="1" enabled="0" scaleDependencyMode="0">
     <individual-layer-settings>
       <layer-setting minScale="0" maxScale="0" tolerance="12" id="May_2024_Photo_Points_e105e1d8_2244_4655_8fcd_d0caa068f251" units="1" type="0" enabled="0"/>
-      <layer-setting minScale="0" maxScale="0" tolerance="12" id="PhotoPoints2023_445f4f50_022d_4c1d_9b14_3bdbe1e002fc" units="1" type="0" enabled="0"/>
       <layer-setting minScale="0" maxScale="0" tolerance="12" id="SuperPipes_BC_AB_Virtual_Vector_abed6ff8_2cc1_4d33_88e8_846fb72509fa" units="1" type="0" enabled="0"/>
       <layer-setting minScale="0" maxScale="0" tolerance="12" id="Dynamic_Observations_June_28_2024_8b8aa557_76f2_449e_9df9_24bc3161e881" units="1" type="0" enabled="0"/>
+      <layer-setting minScale="0" maxScale="0" tolerance="12" id="PhotoPoints2023_445f4f50_022d_4c1d_9b14_3bdbe1e002fc" units="1" type="0" enabled="0"/>
       <layer-setting minScale="0" maxScale="0" tolerance="12" id="Pipelines_4aafa246_71cf_4ddb_90ca_d89885abbb33" units="1" type="1" enabled="0"/>
     </individual-layer-settings>
   </snapping-settings>
@@ -264,18 +264,6 @@
   </main-annotation-layer>
   <projectlayers>
     <maplayer maxScale="0" simplifyLocal="1" readOnly="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyDrawingHints="0" type="vector" symbologyReferenceScale="-1" refreshOnNotifyEnabled="0" simplifyAlgorithm="0" autoRefreshMode="Disabled" minScale="100000000" simplifyDrawingTol="1" legendPlaceholderImage="" refreshOnNotifyMessage="" autoRefreshTime="0" geometry="Point" labelsEnabled="1" simplifyMaxScale="1" wkbType="Point">
-      <extent>
-        <xmin>-124.2484741210940058</xmin>
-        <ymin>55.37533569335940342</ymin>
-        <xmax>-118.7372741699220029</xmax>
-        <ymax>59.989013671875</ymax>
-      </extent>
-      <wgs84extent>
-        <xmin>-124.2484741210940058</xmin>
-        <ymin>55.37533569335940342</ymin>
-        <xmax>-118.7372741699220029</xmax>
-        <ymax>59.989013671875</ymax>
-      </wgs84extent>
       <id>Dynamic_Observations_June_28_2024_8b8aa557_76f2_449e_9df9_24bc3161e881</id>
       <datasource>dbname='lizmap_editor' host=15.222.39.31 port=5432 user='postgres' password='98fsh2bx89h1h0aj29b2bx9jag8x' sslmode=disable key='id' estimatedmetadata=true srid=4326 type=Point checkPrimaryKeyUnicity='1' table="Pipeline_Inspections"."Deficiencies" (geom) sql="project_name" = 'North River 2024 Annual Pipeline Inspection'&#xd;
 AND "Deficiencies" not ilike 'GLARS%'&#xd;
@@ -2007,18 +1995,6 @@ def my_form_open(dialog, layer, feature):
       <blendMode>0</blendMode>
     </maplayer>
     <maplayer maxScale="0" simplifyLocal="1" readOnly="0" hasScaleBasedVisibilityFlag="1" styleCategories="AllStyleCategories" simplifyDrawingHints="0" type="vector" symbologyReferenceScale="-1" refreshOnNotifyEnabled="0" simplifyAlgorithm="0" autoRefreshMode="Disabled" minScale="250000" simplifyDrawingTol="1" legendPlaceholderImage="" refreshOnNotifyMessage="" autoRefreshTime="0" geometry="Point" labelsEnabled="1" simplifyMaxScale="1" wkbType="PointZ">
-      <extent>
-        <xmin>-124.22064444444400522</xmin>
-        <ymin>0</ymin>
-        <xmax>0</xmax>
-        <ymax>59.96636944444440331</ymax>
-      </extent>
-      <wgs84extent>
-        <xmin>-124.22064444444400522</xmin>
-        <ymin>0</ymin>
-        <xmax>0</xmax>
-        <ymax>59.96636944444440331</ymax>
-      </wgs84extent>
       <id>May_2024_Photo_Points_e105e1d8_2244_4655_8fcd_d0caa068f251</id>
       <datasource>./Annual_Pipeline_Inspections/2024/2024_PhotoPoints.gpkg|layername=2024_PhotoPoints</datasource>
       <shortname>l_2024_Photos</shortname>
@@ -2877,18 +2853,6 @@ def my_form_open(dialog, layer, feature):
       <mapTip enabled="1"></mapTip>
     </maplayer>
     <maplayer maxScale="0" simplifyLocal="1" readOnly="0" hasScaleBasedVisibilityFlag="1" styleCategories="AllStyleCategories" simplifyDrawingHints="0" type="vector" symbologyReferenceScale="-1" refreshOnNotifyEnabled="0" simplifyAlgorithm="0" autoRefreshMode="Disabled" minScale="250000" simplifyDrawingTol="1" legendPlaceholderImage="" refreshOnNotifyMessage="" autoRefreshTime="0" geometry="Point" labelsEnabled="1" simplifyMaxScale="1" wkbType="PointZ">
-      <extent>
-        <xmin>-123.29332733154299717</xmin>
-        <ymin>55.39847183227539773</ymin>
-        <xmax>-118.7619934082029971</xmax>
-        <ymax>59.32607269287110086</ymax>
-      </extent>
-      <wgs84extent>
-        <xmin>-123.29332733154299717</xmin>
-        <ymin>55.39847183227539773</ymin>
-        <xmax>-118.7619934082029971</xmax>
-        <ymax>59.32607269287110086</ymax>
-      </wgs84extent>
       <id>PhotoPoints2023_445f4f50_022d_4c1d_9b14_3bdbe1e002fc</id>
       <datasource>./Annual_Pipeline_Inspections/2023/2023883_Annual_Pipeline_Inspection_PhotoPoints.gpkg|layername=PhotoPoints2023</datasource>
       <shortname>l_2023_Photos</shortname>
@@ -5156,18 +5120,6 @@ def my_form_open(dialog, layer, feature):
       <mapTip enabled="1"></mapTip>
     </maplayer>
     <maplayer maxScale="0" simplifyLocal="1" readOnly="0" hasScaleBasedVisibilityFlag="1" styleCategories="AllStyleCategories" simplifyDrawingHints="1" type="vector" symbologyReferenceScale="-1" refreshOnNotifyEnabled="0" simplifyAlgorithm="0" autoRefreshMode="Disabled" minScale="250000" simplifyDrawingTol="1" legendPlaceholderImage="" refreshOnNotifyMessage="" autoRefreshTime="0" geometry="Line" labelsEnabled="0" simplifyMaxScale="1" wkbType="LineStringZM">
-      <extent>
-        <xmin>-120.15335850728922651</xmin>
-        <ymin>48.99703989967167672</ymin>
-        <xmax>-109.98576936756222722</xmax>
-        <ymax>59.99991102897087103</ymax>
-      </extent>
-      <wgs84extent>
-        <xmin>-120.15335850728922651</xmin>
-        <ymin>48.99703989967167672</ymin>
-        <xmax>-109.98576936756228406</xmax>
-        <ymax>59.99991102897081419</ymax>
-      </wgs84extent>
       <id>Pipelines_4aafa246_71cf_4ddb_90ca_d89885abbb33</id>
       <datasource>./GDM/SuperPipes_BC_AB_Virtual_Vector.vrt|layername=unionLayer|subset="OPER" not in (&#xd;
 'NORTHRIVER MIDSTREAM CANADA PARTNER LIMITED, AS GENERAL',&#xd;
@@ -7039,18 +6991,6 @@ def my_form_open(dialog, layer, feature):
       <mapTip enabled="1"></mapTip>
     </maplayer>
     <maplayer maxScale="0" simplifyLocal="1" readOnly="0" hasScaleBasedVisibilityFlag="0" styleCategories="AllStyleCategories" simplifyDrawingHints="1" type="vector" symbologyReferenceScale="-1" refreshOnNotifyEnabled="0" simplifyAlgorithm="0" autoRefreshMode="Disabled" minScale="2000000" simplifyDrawingTol="1" legendPlaceholderImage="" refreshOnNotifyMessage="" autoRefreshTime="0" geometry="Line" labelsEnabled="0" simplifyMaxScale="1" wkbType="LineStringZM">
-      <extent>
-        <xmin>-124.22118165342203611</xmin>
-        <ymin>55.41336941415971751</ymin>
-        <xmax>-118.76458780038666418</xmax>
-        <ymax>59.96618836844474032</ymax>
-      </extent>
-      <wgs84extent>
-        <xmin>-124.22118165342203611</xmin>
-        <ymin>55.41336941415971751</ymin>
-        <xmax>-118.76458780038652208</xmax>
-        <ymax>59.96618836844476164</ymax>
-      </wgs84extent>
       <id>SuperPipes_BC_AB_Virtual_Vector_abed6ff8_2cc1_4d33_88e8_846fb72509fa</id>
       <datasource>./GDM/SuperPipes_BC_AB_Virtual_Vector.vrt|layername=unionLayer|subset="OPER" in (&#xd;
 'NORTHRIVER MIDSTREAM CANADA PARTNER LIMITED, AS GENERAL',&#xd;
@@ -8936,7 +8876,7 @@ def my_form_open(dialog, layer, feature):
         <ymax>85.05112877980660357</ymax>
       </wgs84extent>
       <id>_c2d82700_7ff2_4e82_af22_3dc013034df9</id>
-      <datasource>http-header:referer=&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D%26key%3DAIzaSyD2NsKzhw6t8KLa60sB62ryr7r20mxaQto&amp;zmax=20&amp;zmin=0</datasource>
+      <datasource>crs=EPSG:3857&amp;format&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D%26key%3DAIzaSyD2NsKzhw6t8KLa60sB62ryr7r20mxaQto&amp;zmax=20&amp;zmin=0&amp;http-header:referer=</datasource>
       <shortname>Google_Satellite_Hybrid_1</shortname>
       <keywordList>
         <value></value>
