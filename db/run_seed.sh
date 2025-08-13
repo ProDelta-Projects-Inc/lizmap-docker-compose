@@ -1,39 +1,52 @@
 #!/bin/bash
 set -e
 
-SEED_NUM="$1"
-
-if [ -z "$SEED_NUM" ]; then
-    echo "Usage: ./db/run_seed.sh <seed_number>"
-    exit 1
+# Usage: ./db/run_seed.sh 001
+VERSION=$1
+if [ -z "$VERSION" ]; then
+  echo "Usage: $0 <seed_version>"
+  exit 1
 fi
 
-SEED_DIR="db/seeds/$SEED_NUM"
-JSON_FILE="$SEED_DIR/${SEED_NUM}.json"
-CSV_FILE="$SEED_DIR/${SEED_NUM}.csv"
+BASE_DIR="$(dirname "$0")"
+SEED_DIR="$BASE_DIR/seeds"
+SEED_PATH="$SEED_DIR/$VERSION"
+
+if [ ! -d "$SEED_PATH" ]; then
+  echo "Seed version '$VERSION' not found."
+  exit 1
+fi
+
+JSON_FILE="$SEED_PATH/$VERSION.json"
+CSV_FILE="$SEED_PATH/$VERSION.csv"
 
 if [ ! -f "$JSON_FILE" ]; then
-    echo "Seed JSON file not found: $JSON_FILE"
-    exit 1
+  echo "JSON file not found: $JSON_FILE"
+  exit 1
 fi
-
 if [ ! -f "$CSV_FILE" ]; then
-    echo "Seed CSV file not found: $CSV_FILE"
-    exit 1
+  echo "CSV file not found: $CSV_FILE"
+  exit 1
 fi
 
-# Extract table name and columns from JSON
-TABLE=$(jq -r '.table' "$JSON_FILE")
-COLUMNS=$(jq -r '.columns | join(",")' "$JSON_FILE")
+# Extract table name using sed (works everywhere)
+TABLE=$(sed -n 's/.*"table"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$JSON_FILE")
+if [ -z "$TABLE" ]; then
+  echo "Could not find 'table' in $JSON_FILE"
+  exit 1
+fi
 
-echo "Seeding table: $TABLE"
-echo "Columns: $COLUMNS"
-echo "From CSV: $CSV_FILE"
+echo "Seeding table: $TABLE from $CSV_FILE"
 
-# Run COPY into Postgres inside the container
-docker exec -i postgis-1 psql -U lizmap -d lizmap -c "\
-    COPY $TABLE ($COLUMNS)
-    FROM STDIN
-    WITH (FORMAT csv, HEADER true, QUOTE '\"');" < "$CSV_FILE"
+# Database connection settings
+DB_NAME=${DB_NAME:-lizmap}
+DB_USER=${DB_USER:-postgres}
+DB_HOST=${DB_HOST:-localhost}
+DB_PORT=${DB_PORT:-5432}
 
-echo "✅ Seed $SEED_NUM completed."
+# Import CSV into the specified table
+psql "host=$DB_HOST port=$DB_PORT dbname=$DB_NAME user=$DB_USER" <<EOF
+\COPY $TABLE FROM '$CSV_FILE' WITH CSV HEADER;
+EOF
+
+echo "✅ Seed $VERSION loaded into table '$TABLE'"
