@@ -29,24 +29,34 @@ if [ ! -f "$CSV_FILE" ]; then
   exit 1
 fi
 
-# Extract table name using sed (works everywhere)
+# Extract table name
 TABLE=$(sed -n 's/.*"table"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$JSON_FILE")
 if [ -z "$TABLE" ]; then
   echo "Could not find 'table' in $JSON_FILE"
   exit 1
 fi
 
+# Optional: extract column list from JSON
+COLUMNS=$(sed -n 's/.*"columns"[[:space:]]*:[[:space:]]*\[\(.*\)\].*/\1/p' "$JSON_FILE" | tr -d ' "')
+if [ -n "$COLUMNS" ]; then
+  COLUMN_LIST="($COLUMNS)"
+else
+  COLUMN_LIST=""
+fi
+
 echo "Seeding table: $TABLE from $CSV_FILE"
 
-# Database connection settings
+# DB connection
 DB_NAME=${DB_NAME:-lizmap}
 DB_USER=${DB_USER:-postgres}
 DB_HOST=${DB_HOST:-localhost}
 DB_PORT=${DB_PORT:-5432}
 
-# Import CSV into the specified table
-psql "host=$DB_HOST port=$DB_PORT dbname=$DB_NAME user=$DB_USER" <<EOF
-\COPY $TABLE FROM '$CSV_FILE' WITH CSV HEADER;
-EOF
+# Run COPY and capture status
+if ! psql "host=$DB_HOST port=$DB_PORT dbname=$DB_NAME user=$DB_USER" \
+  -c "\COPY $TABLE$COLUMN_LIST FROM '$CSV_FILE' WITH CSV HEADER"; then
+  echo "❌ Failed to seed $VERSION into table '$TABLE'"
+  exit 1
+fi
 
 echo "✅ Seed $VERSION loaded into table '$TABLE'"
