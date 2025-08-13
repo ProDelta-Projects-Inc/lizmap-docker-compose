@@ -1,6 +1,6 @@
 # Run Lizmap stack with docker-compose
 
-Run a complete Lizmap stack with test data. 
+Run a complete Lizmap stack with test data.
 
 - Lizmap Web Client
 - QGIS Server
@@ -13,7 +13,7 @@ Run a complete Lizmap stack with test data.
 ## Requirements
 
 - Docker engine
-- docker-compose v2 
+- docker-compose v2
 
 ## Quick start
 
@@ -22,21 +22,26 @@ Execute the commands below for your system and open your browser at http://local
 ### Linux
 
 In a shell, configure the environment:
+
 ```bash
 ./configure.sh configure
 ```
+
 Or if you want to test specific version (here last 3.X.Y version):
+
 ```bash
 LIZMAP_VERSION_TAG=3.9 ./configure.sh configure
 ```
 
 Run lizmap:
+
 ```bash
 docker compose pull
 docker compose up
 ```
 
 To run lizmap visible to another system, prefix the docker command with a variable. NB! This will be plain HTTP with no encryption and not suitable for production.
+
 ```bash
 LIZMAP_PORT=EXTERNAL_IP_HERE:80 docker compose up
 ```
@@ -45,17 +50,20 @@ LIZMAP_PORT=EXTERNAL_IP_HERE:80 docker compose up
 
 In order to user Docker on Windows you may install [Docker desktop for Windows](https://docs.docker.com/desktop/windows/install/)
 
-
 If you have some distribution installed (Ubuntu, ...) in WSL, you can simply run the linux command as above, once in it.
 
 Or in PowerShell, run the following command to set up some files
+
 ```bash
 configure.bat
-``` 
+```
+
 You can then launch the docker using
+
 ```bash
 docker compose --env-file .env.windows up
 ```
+
 Or if you want to test specific version, you can edit `.env.windows` and change (here last 3.X.Y version):
 
 ```bash
@@ -76,17 +84,18 @@ Default login is `admin`, password `admin`. It will be asked to change it at fir
 ## Add your own project
 
 You need to :
-* create a directory in `lizmap/instances`
-* visit http://localhost:8090/admin.php/admin/maps/
-* in the Lizmap admin panel, add the directory you created
-* add one or more QGIS projects with the Lizmap CFG file in the directory
+
+- create a directory in `lizmap/instances`
+- visit http://localhost:8090/admin.php/admin/maps/
+- in the Lizmap admin panel, add the directory you created
+- add one or more QGIS projects with the Lizmap CFG file in the directory
 
 ## Reset the configuration
 
 In command line
 
 ```bash
-./configure.sh  clean 
+./configure.sh  clean
 ```
 
 This will remove all previous configuration. You will have to reenter the configuration in Lizmap
@@ -104,12 +113,40 @@ Ensure packages are installed:
 yarn install
 ```
 
-Add pem key to root level directory. Update .upload.env with environment variables. If uploading a single project, specify the specific directory. 
+Add pem key to root level directory. Update .upload.env with environment variables. If uploading a single project, specify the specific directory.
 
 Run upload script:
 
 ```
 yarn upload
+```
+
+## DB Migrations
+
+Allow access to db commands:
+
+```bash
+chmod +x db/rollback_migration.sh
+chmod +x db/run_migration.sh
+chmod +x db/run_seed.sh
+```
+
+Run migrations:
+
+```bash
+./db/run_migrations.sh
+```
+
+Rollback single migration:
+
+```bash
+./db/rollback_migration.sh
+```
+
+Run seed:
+
+```bash
+./db/run_seed.sh 001
 ```
 
 ## References
