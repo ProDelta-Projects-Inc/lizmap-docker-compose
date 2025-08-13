@@ -16,6 +16,7 @@
 /lizmap.dir/**/*.PNG
 /lizmap.dir/**/htaccess
 /lizmap.dir/**/*.gpkg
+/lizmap.dir/**/*.gpkg-*
 /lizmap.dir/**/*.cpg
 /lizmap.dir/**/*.dbf
 /lizmap.dir/**/*.prj
