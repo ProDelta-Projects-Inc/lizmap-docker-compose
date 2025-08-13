@@ -25,3 +25,5 @@
 /lizmap.dir/**/*.tfw
 /lizmap.dir/**/*.qmd
 /lizmap.dir/**/*.kml
+/lizmap.dir/**/*.vrt
+/lizmap.dir/**/*.qix
