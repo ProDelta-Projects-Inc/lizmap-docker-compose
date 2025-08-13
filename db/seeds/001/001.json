@@ -1,17 +1,3 @@
 {
-  "table": "lizmap.observations",
-  "columns": [
-    "id",
-    "portfolio_name",
-    "project_name",
-    "site_name",
-    "owner_organization",
-    "service_organization",
-    "data_source",
-    "date",
-    "deficiencies",
-    "description",
-    "lat",
-    "lon"
-  ]
+  "table": "lizmap.observations"
 }
