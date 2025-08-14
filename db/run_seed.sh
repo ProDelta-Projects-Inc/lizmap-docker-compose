@@ -1,6 +1,37 @@
 #!/bin/bash
 set -e
 
+# ------------------------------------------------------------
+# Usage:
+#   ./db/run_seed.sh <seed_id> [target_srid]
+#
+# Description:
+#   Seeds a PostGIS table from a CSV and JSON definition in ./db/seeds/<seed_id>/.
+#
+# Required:
+#   <seed_id>     The folder name inside ./db/seeds/ containing:
+#                   - <seed_id>.csv : Data file
+#                   - <seed_id>.json: Metadata file (must contain "table" key)
+#
+# Optional:
+#   [target_srid] Override the target SRID for geometry transformation.
+#
+# SRID determination rules:
+#   Input SRID:
+#       1. "srid" key in JSON
+#       2. Default: 4326 (WGS84)
+#
+#   Target SRID:
+#       1. Command-line [target_srid]
+#       2. "target_srid" key in JSON
+#       3. Default: 3857 (Web Mercator)
+#
+# Notes:
+#   - Requires a PostGIS-enabled database.
+#   - Assumes CSV contains 'lat' and 'lon' columns.
+#   - Geometry is computed in-memory; no temp geometry table is created.
+# ------------------------------------------------------------
+
 SEED_ID="$1"
 TARGET_SRID_ARG="$2"
 
