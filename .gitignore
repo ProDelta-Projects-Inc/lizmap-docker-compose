@@ -28,3 +28,4 @@
 /lizmap.dir/**/*.kml
 /lizmap.dir/**/*.vrt
 /lizmap.dir/**/*.qix
+/lizmap.dir/instances/**/*.csv
