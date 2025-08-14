@@ -17,48 +17,58 @@ if [ ! -f "$JSON_FILE" ] || [ ! -f "$CSV_FILE" ]; then
   exit 1
 fi
 
-# Extract table name from JSON manually without jq
+# Extract table name from JSON
 TABLE=$(grep -o '"table" *: *"[^"]*"' "$JSON_FILE" | sed 's/.*"table" *: *"//;s/"$//')
 if [ -z "$TABLE" ]; then
   echo "Could not find 'table' in $JSON_FILE"
   exit 1
 fi
 
-echo "🌱 Seeding table: $TABLE from $CSV_FILE"
+echo "Seeding table: $TABLE from $CSV_FILE"
 
-# Create a temp staging table name
+# Staging table name
 STAGING_TABLE="staging_${TABLE//./_}"
 
-# Get header line from CSV
+# Extract header from CSV
 HEADER=$(head -n 1 "$CSV_FILE")
+HEADER_CLEAN=$(echo "$HEADER" | tr -d '\r')
 
-# Create staging table dynamically with text columns
+# Create staging table with all TEXT columns
 psql -U postgres -d mydb -c "DROP TABLE IF EXISTS $STAGING_TABLE;"
-psql -U postgres -d mydb -c "CREATE TABLE $STAGING_TABLE ($(echo $HEADER | sed 's/,/ TEXT,/g') TEXT);"
+psql -U postgres -d mydb -c "CREATE TABLE $STAGING_TABLE ($(echo $HEADER_CLEAN | sed 's/,/ TEXT,/g') TEXT);"
 
 # Import CSV into staging table
 psql -U postgres -d mydb -c "\COPY $STAGING_TABLE FROM '$CSV_FILE' CSV HEADER;"
 
-# Insert into real table with geom computed from lat/lon
+# Build insert column list and select expression list
+IFS=',' read -ra COLS <<< "$HEADER_CLEAN"
+INSERT_COLS=()
+SELECT_COLS=()
+HAS_LAT=false
+HAS_LON=false
+
+for col in "${COLS[@]}"; do
+    col_trim=$(echo "$col" | xargs) # remove spaces
+    INSERT_COLS+=("$col_trim")
+    SELECT_COLS+=("$col_trim")
+
+    [[ "$col_trim" == "lat" ]] && HAS_LAT=true
+    [[ "$col_trim" == "lon" ]] && HAS_LON=true
+done
+
+# Add geom column if lat/lon present
+if $HAS_LAT && $HAS_LON; then
+    INSERT_COLS+=("geom")
+    SELECT_COLS+=("ST_Transform(ST_SetSRID(ST_MakePoint(lon::DOUBLE PRECISION, lat::DOUBLE PRECISION), 4326), 3857)")
+fi
+
+INSERT_COLS_STR=$(IFS=','; echo "${INSERT_COLS[*]}")
+SELECT_COLS_STR=$(IFS=','; echo "${SELECT_COLS[*]}")
+
+# Insert into main table
 psql -U postgres -d mydb -c "
-INSERT INTO $TABLE
-(id, portfolio_name, project_name, site_name, owner_organization, service_organization,
- data_source, inspection_date, deficiencies, description, lat, lon, geom)
-SELECT
-  id::BIGINT,
-  portfolio_name,
-  project_name,
-  site_name,
-  owner_organization,
-  service_organization,
-  data_source,
-  inspection_date::DATE,
-  deficiencies,
-  description,
-  lat::DOUBLE PRECISION,
-  lon::DOUBLE PRECISION,
-  ST_Transform(ST_SetSRID(ST_MakePoint(lon::DOUBLE PRECISION, lat::DOUBLE PRECISION), 4326), 3857)
-FROM $STAGING_TABLE;
+INSERT INTO $TABLE ($INSERT_COLS_STR)
+SELECT $SELECT_COLS_STR FROM $STAGING_TABLE;
 "
 
 # Drop staging table
