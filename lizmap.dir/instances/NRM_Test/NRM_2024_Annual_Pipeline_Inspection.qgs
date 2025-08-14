@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-14T11:56:02" saveUserFull="Max Halleran">
+<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-14T13:47:24" saveUserFull="Max Halleran">
   <homePath path=""/>
   <title></title>
   <transaction mode="Disabled"/>
@@ -10041,7 +10041,7 @@ def my_form_open(dialog, layer, feature):
       </spatialrefsys>
     </CoordinateCustomCrs>
   </ProjectDisplaySettings>
-  <ProjectGpsSettings autoCommitFeatures="0" destinationLayerSource="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='0' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" autoAddTrackVertices="0" destinationLayerProvider="postgres" destinationLayerName="observations" destinationLayer="observations_80630dc9_1bd1_456e_9db3_ad3990ee5fac" destinationFollowsActiveLayer="1">
+  <ProjectGpsSettings autoCommitFeatures="0" destinationLayerSource="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='1' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" autoAddTrackVertices="0" destinationLayerProvider="postgres" destinationLayerName="observations stripped" destinationLayer="observations_7f2debe4_26c3_466b_abd6_e981e5e11764" destinationFollowsActiveLayer="1">
     <timeStampFields/>
   </ProjectGpsSettings>
 </qgis>
