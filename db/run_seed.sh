@@ -74,4 +74,4 @@ SELECT $SELECT_COLS_STR FROM $STAGING_TABLE;
 # Drop staging table
 psql -U postgres -d mydb -c "DROP TABLE $STAGING_TABLE;"
 
-echo "✅ Seed $SEED_ID loaded into table '$TABLE'"
+echo "Seed $SEED_ID loaded into table '$TABLE'"
