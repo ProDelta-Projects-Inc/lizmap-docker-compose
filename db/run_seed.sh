@@ -80,14 +80,14 @@ STAGING_TABLE="staging_${TABLE//./_}"
 HEADER=$(head -n 1 "$CSV_FILE")
 
 # Create staging table with TEXT columns
-psql -U postgres -d mydb -c "DROP TABLE IF EXISTS $STAGING_TABLE;"
-psql -U postgres -d mydb -c "CREATE TABLE $STAGING_TABLE ($(echo "$HEADER" | sed 's/,/ TEXT,/g') TEXT);"
+docker exec -i postgis-1 psql -U postgres -d lizmap -c "DROP TABLE IF EXISTS $STAGING_TABLE;"
+docker exec -i postgis-1 psql -U postgres -d lizmap -c "CREATE TABLE $STAGING_TABLE ($(echo "$HEADER" | sed 's/,/ TEXT,/g') TEXT);"
 
 # Import CSV into staging table
-psql -U postgres -d mydb -c "\COPY $STAGING_TABLE FROM '$CSV_FILE' CSV HEADER;"
+docker exec -i postgis-1 psql -U postgres -d lizmap -c "\COPY $STAGING_TABLE FROM '$CSV_FILE' CSV HEADER;"
 
 # Insert into real table
-psql -U postgres -d mydb -c "
+docker exec -i postgis-1 psql -U postgres -d lizmap -c "
 INSERT INTO $TABLE
 SELECT
   *,
@@ -102,6 +102,6 @@ FROM $STAGING_TABLE;
 "
 
 # Drop staging table
-psql -U postgres -d mydb -c "DROP TABLE $STAGING_TABLE;"
+docker exec -i postgis-1 psql -U postgres -d lizmap -c "DROP TABLE $STAGING_TABLE;"
 
 echo "Seed $SEED_ID loaded into table '$TABLE'"
