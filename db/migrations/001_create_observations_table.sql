@@ -1,6 +1,6 @@
 -- UP
 CREATE TABLE lizmap.observations (
-    id BIGINT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     portfolio_name TEXT,
     project_name TEXT,
     site_name TEXT,
