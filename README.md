@@ -127,7 +127,7 @@ Allow access to db commands:
 
 ```bash
 chmod +x db/rollback_migration.sh
-chmod +x db/run_migration.sh
+chmod +x db/run_migrations.sh
 chmod +x db/run_seed.sh
 ```
 
