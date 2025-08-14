@@ -2,9 +2,11 @@
 set -e
 
 SEED_ID="$1"
+TARGET_SRID_ARG="$2"
+
 if [ -z "$SEED_ID" ]; then
-    echo "Usage: $0 <seed_id>"
-    exit 1
+  echo "Usage: $0 <seed_id> [target_srid]"
+  exit 1
 fi
 
 BASE_DIR="$(dirname "$0")"
@@ -17,58 +19,55 @@ if [ ! -f "$JSON_FILE" ] || [ ! -f "$CSV_FILE" ]; then
   exit 1
 fi
 
-# Extract table name from JSON
+# --- Parse values from JSON manually ---
 TABLE=$(grep -o '"table" *: *"[^"]*"' "$JSON_FILE" | sed 's/.*"table" *: *"//;s/"$//')
+INPUT_SRID=$(grep -o '"srid" *: *[0-9]\+' "$JSON_FILE" | sed 's/.*: *//')
+TARGET_SRID_JSON=$(grep -o '"target_srid" *: *[0-9]\+' "$JSON_FILE" | sed 's/.*: *//')
+
+# Fallbacks
+[ -z "$INPUT_SRID" ] && INPUT_SRID=4326
+if [ -n "$TARGET_SRID_ARG" ]; then
+  TARGET_SRID="$TARGET_SRID_ARG"
+elif [ -n "$TARGET_SRID_JSON" ]; then
+  TARGET_SRID="$TARGET_SRID_JSON"
+else
+  TARGET_SRID=3857
+fi
+
 if [ -z "$TABLE" ]; then
   echo "Could not find 'table' in $JSON_FILE"
   exit 1
 fi
 
 echo "Seeding table: $TABLE from $CSV_FILE"
+echo "Input SRID: $INPUT_SRID → Target SRID: $TARGET_SRID"
 
-# Staging table name
+# Create staging table name
 STAGING_TABLE="staging_${TABLE//./_}"
 
-# Extract header from CSV
+# Get header from CSV
 HEADER=$(head -n 1 "$CSV_FILE")
-HEADER_CLEAN=$(echo "$HEADER" | tr -d '\r')
 
-# Create staging table with all TEXT columns
+# Create staging table with TEXT columns
 psql -U postgres -d mydb -c "DROP TABLE IF EXISTS $STAGING_TABLE;"
-psql -U postgres -d mydb -c "CREATE TABLE $STAGING_TABLE ($(echo $HEADER_CLEAN | sed 's/,/ TEXT,/g') TEXT);"
+psql -U postgres -d mydb -c "CREATE TABLE $STAGING_TABLE ($(echo "$HEADER" | sed 's/,/ TEXT,/g') TEXT);"
 
 # Import CSV into staging table
 psql -U postgres -d mydb -c "\COPY $STAGING_TABLE FROM '$CSV_FILE' CSV HEADER;"
 
-# Build insert column list and select expression list
-IFS=',' read -ra COLS <<< "$HEADER_CLEAN"
-INSERT_COLS=()
-SELECT_COLS=()
-HAS_LAT=false
-HAS_LON=false
-
-for col in "${COLS[@]}"; do
-    col_trim=$(echo "$col" | xargs) # remove spaces
-    INSERT_COLS+=("$col_trim")
-    SELECT_COLS+=("$col_trim")
-
-    [[ "$col_trim" == "lat" ]] && HAS_LAT=true
-    [[ "$col_trim" == "lon" ]] && HAS_LON=true
-done
-
-# Add geom column if lat/lon present
-if $HAS_LAT && $HAS_LON; then
-    INSERT_COLS+=("geom")
-    SELECT_COLS+=("ST_Transform(ST_SetSRID(ST_MakePoint(lon::DOUBLE PRECISION, lat::DOUBLE PRECISION), 4326), 3857)")
-fi
-
-INSERT_COLS_STR=$(IFS=','; echo "${INSERT_COLS[*]}")
-SELECT_COLS_STR=$(IFS=','; echo "${SELECT_COLS[*]}")
-
-# Insert into main table
+# Insert into real table
 psql -U postgres -d mydb -c "
-INSERT INTO $TABLE ($INSERT_COLS_STR)
-SELECT $SELECT_COLS_STR FROM $STAGING_TABLE;
+INSERT INTO $TABLE
+SELECT
+  *,
+  ST_Transform(
+    ST_SetSRID(
+      ST_MakePoint(lon::DOUBLE PRECISION, lat::DOUBLE PRECISION),
+      $INPUT_SRID
+    ),
+    $TARGET_SRID
+  ) AS geom
+FROM $STAGING_TABLE;
 "
 
 # Drop staging table
