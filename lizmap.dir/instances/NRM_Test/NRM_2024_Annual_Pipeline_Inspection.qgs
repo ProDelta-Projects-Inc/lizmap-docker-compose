@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-14T14:17:18" saveUserFull="Max Halleran">
+<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-14T14:26:28" saveUserFull="Max Halleran">
   <homePath path=""/>
   <title></title>
   <transaction mode="Disabled"/>
@@ -40,7 +40,7 @@
         <Option/>
       </customproperties>
     </layer-tree-layer>
-    <layer-tree-layer source="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='0' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" legend_exp="" name="observations" expanded="0" legend_split_behavior="0" patch_size="-1,-1" providerKey="postgres" checked="Qt::Checked" id="observations_80630dc9_1bd1_456e_9db3_ad3990ee5fac">
+    <layer-tree-layer source="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='0' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" legend_exp="" name="observations" expanded="0" legend_split_behavior="0" patch_size="-1,-1" providerKey="postgres" checked="Qt::Unchecked" id="observations_80630dc9_1bd1_456e_9db3_ad3990ee5fac">
       <customproperties>
         <Option/>
       </customproperties>
@@ -140,9 +140,9 @@
         <legendlayerfile isInOverview="0" layerid="observations_7f2debe4_26c3_466b_abd6_e981e5e11764" visible="1"/>
       </filegroup>
     </legendlayer>
-    <legendlayer drawingOrder="-1" open="false" showFeatureCount="0" name="observations" checked="Qt::Checked">
+    <legendlayer drawingOrder="-1" open="false" showFeatureCount="0" name="observations" checked="Qt::Unchecked">
       <filegroup open="false" hidden="false">
-        <legendlayerfile isInOverview="0" layerid="observations_80630dc9_1bd1_456e_9db3_ad3990ee5fac" visible="1"/>
+        <legendlayerfile isInOverview="0" layerid="observations_80630dc9_1bd1_456e_9db3_ad3990ee5fac" visible="0"/>
       </filegroup>
     </legendlayer>
     <legendgroup open="false" name="PhotoPoints" checked="Qt::Checked">
