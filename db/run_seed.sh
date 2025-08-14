@@ -81,7 +81,10 @@ HEADER=$(head -n 1 "$CSV_FILE")
 
 # Create staging table with TEXT columns
 docker exec -i postgis-1 psql -U postgres -d lizmap -c "DROP TABLE IF EXISTS $STAGING_TABLE;"
-docker exec -i postgis-1 psql -U postgres -d lizmap -c "CREATE TABLE $STAGING_TABLE (LIKE $TABLE INCLUDING ALL);"
+docker exec -i postgis-1 psql -U postgres -d lizmap -c "
+CREATE TABLE $STAGING_TABLE (LIKE $TABLE INCLUDING ALL INCLUDING DEFAULTS);
+ALTER TABLE $STAGING_TABLE DROP COLUMN geom;
+"
 
 # Import CSV into staging table
 cat "$CSV_FILE" | docker exec -i postgis-1 psql -U postgres -d lizmap -c "\COPY $STAGING_TABLE FROM STDIN CSV HEADER;"
