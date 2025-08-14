@@ -84,7 +84,7 @@ docker exec -i postgis-1 psql -U postgres -d lizmap -c "DROP TABLE IF EXISTS $ST
 docker exec -i postgis-1 psql -U postgres -d lizmap -c "CREATE TABLE $STAGING_TABLE ($(echo "$HEADER" | sed 's/,/ TEXT,/g') TEXT);"
 
 # Import CSV into staging table
-docker exec -i postgis-1 psql -U postgres -d lizmap -c "\COPY $STAGING_TABLE FROM '$CSV_FILE' CSV HEADER;"
+cat "$CSV_FILE" | docker exec -i postgis-1 psql -U postgres -d lizmap -c "\COPY $STAGING_TABLE FROM STDIN CSV HEADER;"
 
 # Insert into real table
 docker exec -i postgis-1 psql -U postgres -d lizmap -c "
