@@ -10,6 +10,7 @@ CREATE TABLE lizmap.observations (
     inspection_date DATE,
     deficiencies TEXT,
     description TEXT,
+    symbol_code TEXT,
     lat DOUBLE PRECISION,
     lon DOUBLE PRECISION,
     geom GEOMETRY(Point, 3857)
