@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-15T12:30:40" saveUserFull="Max Halleran">
+<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-15T12:41:35" saveUserFull="Max Halleran">
   <homePath path=""/>
   <title></title>
   <transaction mode="Disabled"/>
@@ -35,7 +35,7 @@
     <customproperties>
       <Option/>
     </customproperties>
-    <layer-tree-layer source="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='1' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" legend_exp="" name="observations Iconography test" expanded="1" legend_split_behavior="0" patch_size="-1,-1" providerKey="postgres" checked="Qt::Checked" id="observations_4de508bd_7e7a_4919_9ac9_fb25587f6adc">
+    <layer-tree-layer source="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='1' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" legend_exp="" name="observations Iconography test" expanded="0" legend_split_behavior="0" patch_size="-1,-1" providerKey="postgres" checked="Qt::Checked" id="observations_4de508bd_7e7a_4919_9ac9_fb25587f6adc">
       <customproperties>
         <Option/>
       </customproperties>
@@ -142,8 +142,8 @@
   </mapcanvas>
   <projectModels/>
   <legend updateDrawingOrder="true">
-    <legendlayer drawingOrder="-1" open="true" showFeatureCount="0" name="observations Iconography test" checked="Qt::Checked">
-      <filegroup open="true" hidden="false">
+    <legendlayer drawingOrder="-1" open="false" showFeatureCount="0" name="observations Iconography test" checked="Qt::Checked">
+      <filegroup open="false" hidden="false">
         <legendlayerfile isInOverview="0" layerid="observations_4de508bd_7e7a_4919_9ac9_fb25587f6adc" visible="1"/>
       </filegroup>
     </legendlayer>
@@ -11400,7 +11400,7 @@ def my_form_open(dialog, layer, feature):
       </spatialrefsys>
     </CoordinateCustomCrs>
   </ProjectDisplaySettings>
-  <ProjectGpsSettings autoCommitFeatures="0" destinationLayerSource="service='postgis1' key='id' srid=3857 type=Point checkPrimaryKeyUnicity='1' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" autoAddTrackVertices="0" destinationLayerProvider="postgres" destinationLayerName="observations Iconography test" destinationLayer="observations_4de508bd_7e7a_4919_9ac9_fb25587f6adc" destinationFollowsActiveLayer="1">
+  <ProjectGpsSettings autoCommitFeatures="0" destinationLayerSource="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='1' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" autoAddTrackVertices="0" destinationLayerProvider="postgres" destinationLayerName="observations Iconography test" destinationLayer="observations_4de508bd_7e7a_4919_9ac9_fb25587f6adc" destinationFollowsActiveLayer="1">
     <timeStampFields/>
   </ProjectGpsSettings>
 </qgis>
