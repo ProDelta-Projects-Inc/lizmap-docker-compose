@@ -12,12 +12,11 @@ set "INSTALL_SOURCE=%SCRIPTDIR%"
 if "%QGIS_VERSION_TAG%"=="" set "QGIS_VERSION_TAG=ltr-rc"
 
 :: ===============================
-:: Convert Windows paths to Docker Unix paths
-:: Requires WSL (wsl.exe) installed
+:: Convert Windows paths to Docker-friendly Unix paths
 :: ===============================
-for /f "usebackq delims=" %%i in (`wsl wslpath "%INSTALL_SOURCE%"`) do set "INSTALL_SOURCE_UNIX=%%i"
-for /f "usebackq delims=" %%i in (`wsl wslpath "%INSTALL_DEST%"`) do set "INSTALL_DEST_UNIX=%%i"
-for /f "usebackq delims=" %%i in (`wsl wslpath "%SCRIPTDIR%"`) do set "SCRIPTDIR_UNIX=%%i"
+call :toUnixPath "%INSTALL_SOURCE%" INSTALL_SOURCE_UNIX
+call :toUnixPath "%INSTALL_DEST%" INSTALL_DEST_UNIX
+call :toUnixPath "%SCRIPTDIR%" SCRIPTDIR_UNIX
 
 :: ===============================
 :: Run Docker container
@@ -33,9 +32,27 @@ docker run -it -u 1000:1000 --rm ^
     --entrypoint /src/configure.sh ^
     3liz/qgis-map-server:%QGIS_VERSION_TAG% _configure
 
-:: ===============================
-:: Done
-:: ===============================
 echo setup finished, you can run 'docker-compose --env-file=.env.windows up'
-
 endlocal
+goto :eof
+
+
+:toUnixPath
+set "p=%~1"
+:: Replace backslashes with forward slashes
+set "p=%p:\=/%"
+:: Extract drive letter
+set "drive=%p:~0,1%"
+:: Remove drive letter and colon
+set "p=%p:~2%"
+:: Lowercase drive letter (Docker style)
+for %%d in (%drive%) do set "drive=%%d"
+set "drive=%drive:A=a%"
+set "drive=%drive:B=b%"
+set "drive=%drive:C=c%"
+set "drive=%drive:D=d%"
+set "drive=%drive:E=e%"
+set "drive=%drive:F=f%"
+:: Combine into /drive/path form
+set "%~2=/%drive%%p%"
+goto :eof
