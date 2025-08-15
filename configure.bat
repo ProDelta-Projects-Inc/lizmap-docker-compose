@@ -1,14 +1,43 @@
 @echo off
+setlocal ENABLEDELAYEDEXPANSION
 
-:: define some variable
-set SCRIPTDIR=%~dp0
-set INSTALL_DEST=%SCRIPTDIR%lizmap
-set INSTALL_SOURCE=%SCRIPTDIR%
-:: ensure it match with .env.windows !
-set QGIS_VERSION_TAG=ltr-rc
+:: -------------------------------
+:: Define variables
+:: -------------------------------
+set "SCRIPTDIR=%~dp0"
+set "INSTALL_DEST=%SCRIPTDIR%lizmap"
+set "INSTALL_SOURCE=%SCRIPTDIR%"
+set "QGIS_VERSION_TAG=ltr-rc"
 
-:: docker run that launch _configure (create service file/lizmapprofile, install plugin, ...)
-docker run -it -u 1000:1000 --rm -e INSTALL_SOURCE=/install -e INSTALL_DEST=/lizmap -e "LIZMAP_DIR=%INSTALL_DEST%" -e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins -v "%INSTALL_SOURCE%:/install" -v "%INSTALL_DEST%:/lizmap" -v "%INSTALL_SOURCE%:/src" --entrypoint /src/configure.sh 3liz/qgis-map-server:%QGIS_VERSION_TAG% _configure
+:: -------------------------------
+:: Ensure install directory exists
+:: -------------------------------
+if not exist "%INSTALL_DEST%" mkdir "%INSTALL_DEST%"
 
-:: all ok, next step is to launch docker-compose
-echo setup finished, you can run 'docker-compose --env-file=.env.windows up'
+:: -------------------------------
+:: Fix line endings of configure.sh
+:: -------------------------------
+echo Converting configure.sh to LF line endings...
+powershell -Command "(Get-Content '%SCRIPTDIR%configure.sh') -replace \"`r`n\",\"`n\" | Set-Content -NoNewline '%SCRIPTDIR%configure.sh'"
+
+:: -------------------------------
+:: Run Docker container
+:: -------------------------------
+docker run -it -u 1000:1000 --rm ^
+    -e INSTALL_SOURCE=/install ^
+    -e INSTALL_DEST=/lizmap ^
+    -e "LIZMAP_DIR=%INSTALL_DEST%" ^
+    -e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins ^
+    -v "%INSTALL_SOURCE%:/install" ^
+    -v "%INSTALL_DEST%:/lizmap" ^
+    -v "%INSTALL_SOURCE%:/src" ^
+    --entrypoint /src/configure.sh ^
+    3liz/qgis-map-server:%QGIS_VERSION_TAG% _configure
+
+:: -------------------------------
+:: Done
+:: -------------------------------
+echo.
+echo Setup finished, you can now run:
+echo docker-compose --env-file=.env.windows up
+endlocal
