@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-15T12:41:35" saveUserFull="Max Halleran">
+<qgis saveUser="max" projectname="" version="3.40.5-Bratislava" saveDateTime="2025-08-15T12:58:45" saveUserFull="Max Halleran">
   <homePath path=""/>
   <title></title>
   <transaction mode="Disabled"/>
@@ -50,7 +50,7 @@
         <Option/>
       </customproperties>
     </layer-tree-layer>
-    <layer-tree-group groupLayer="" name="PhotoPoints" expanded="0" checked="Qt::Unchecked">
+    <layer-tree-group groupLayer="" name="PhotoPoints" expanded="1" checked="Qt::Unchecked">
       <customproperties>
         <Option type="Map">
           <Option name="wmsShortName" value="PhotoPoints" type="QString"/>
@@ -157,7 +157,7 @@
         <legendlayerfile isInOverview="0" layerid="observations_80630dc9_1bd1_456e_9db3_ad3990ee5fac" visible="0"/>
       </filegroup>
     </legendlayer>
-    <legendgroup open="false" name="PhotoPoints" checked="Qt::Unchecked">
+    <legendgroup open="true" name="PhotoPoints" checked="Qt::Unchecked">
       <legendlayer drawingOrder="-1" open="true" showFeatureCount="0" name="2024 Photos" checked="Qt::Checked">
         <filegroup open="true" hidden="false">
           <legendlayerfile isInOverview="1" layerid="May_2024_Photo_Points_e105e1d8_2244_4655_8fcd_d0caa068f251" visible="0"/>
@@ -534,6 +534,47 @@
       </renderer-v2>
       <selection mode="Default">
         <selectionColor invalid="1"/>
+        <selectionSymbol>
+          <symbol is_animated="0" name="" clip_to_extent="1" alpha="1" frame_rate="10" type="marker" force_rhr="0">
+            <data_defined_properties>
+              <Option type="Map">
+                <Option name="name" value="" type="QString"/>
+                <Option name="properties"/>
+                <Option name="type" value="collection" type="QString"/>
+              </Option>
+            </data_defined_properties>
+            <layer locked="0" pass="0" id="{55084ca4-b2b1-449f-847f-ca8a374dd735}" class="SimpleMarker" enabled="1">
+              <Option type="Map">
+                <Option name="angle" value="0" type="QString"/>
+                <Option name="cap_style" value="square" type="QString"/>
+                <Option name="color" value="255,0,0,255,rgb:1,0,0,1" type="QString"/>
+                <Option name="horizontal_anchor_point" value="1" type="QString"/>
+                <Option name="joinstyle" value="bevel" type="QString"/>
+                <Option name="name" value="circle" type="QString"/>
+                <Option name="offset" value="0,0" type="QString"/>
+                <Option name="offset_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+                <Option name="offset_unit" value="MM" type="QString"/>
+                <Option name="outline_color" value="35,35,35,255,rgb:0.13725490196078433,0.13725490196078433,0.13725490196078433,1" type="QString"/>
+                <Option name="outline_style" value="solid" type="QString"/>
+                <Option name="outline_width" value="0" type="QString"/>
+                <Option name="outline_width_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+                <Option name="outline_width_unit" value="MM" type="QString"/>
+                <Option name="scale_method" value="diameter" type="QString"/>
+                <Option name="size" value="2" type="QString"/>
+                <Option name="size_map_unit_scale" value="3x:0,0,0,0,0,0" type="QString"/>
+                <Option name="size_unit" value="MM" type="QString"/>
+                <Option name="vertical_anchor_point" value="1" type="QString"/>
+              </Option>
+              <data_defined_properties>
+                <Option type="Map">
+                  <Option name="name" value="" type="QString"/>
+                  <Option name="properties"/>
+                  <Option name="type" value="collection" type="QString"/>
+                </Option>
+              </data_defined_properties>
+            </layer>
+          </symbol>
+        </selectionSymbol>
       </selection>
       <labeling type="simple">
         <settings calloutType="simple">
@@ -676,14 +717,14 @@
             <Option value="&quot;filename&quot;" type="QString"/>
           </Option>
           <Option name="embeddedWidgets/count" value="0" type="int"/>
-          <Option name="variableNames" type="invalid"/>
-          <Option name="variableValues" type="invalid"/>
+          <Option name="variableNames"/>
+          <Option name="variableValues"/>
         </Option>
       </customproperties>
       <blendMode>0</blendMode>
       <featureBlendMode>0</featureBlendMode>
       <layerOpacity>1</layerOpacity>
-      <SingleCategoryDiagramRenderer diagramType="Histogram" attributeLegend="1">
+      <LinearlyInterpolatedDiagramRenderer lowerValue="0" lowerWidth="0" upperHeight="5" upperWidth="5" diagramType="Histogram" attributeLegend="1" classificationAttributeExpression="" upperValue="0" lowerHeight="0">
         <DiagramCategory penWidth="0" showAxis="1" scaleDependency="Area" direction="0" lineSizeScale="3x:0,0,0,0,0,0" width="15" scaleBasedVisibility="0" stackedDiagramSpacing="0" diagramOrientation="Up" backgroundAlpha="255" spacingUnit="MM" lineSizeType="MM" backgroundColor="#ffffff" enabled="0" minimumSize="0" spacing="5" labelPlacementMethod="XHeight" opacity="1" sizeType="MM" barWidth="5" penColor="#000000" maxScaleDenominator="1e+08" height="15" penAlpha="255" rotationOffset="270" stackedDiagramSpacingUnitScale="3x:0,0,0,0,0,0" stackedDiagramSpacingUnit="MM" spacingUnitScale="3x:0,0,0,0,0,0" minScaleDenominator="0" sizeScale="3x:0,0,0,0,0,0" stackedDiagramMode="Horizontal">
           <fontProperties italic="0" description="MS Shell Dlg 2,8.25,-1,5,50,0,0,0,0,0" underline="0" bold="0" style="" strikethrough="0"/>
           <attribute color="#000000" colorOpacity="1" label="" field=""/>
@@ -737,7 +778,7 @@
             </symbol>
           </axisSymbol>
         </DiagramCategory>
-      </SingleCategoryDiagramRenderer>
+      </LinearlyInterpolatedDiagramRenderer>
       <DiagramLayerSettings placement="0" linePlacementFlags="18" showAll="1" priority="0" zIndex="0" obstacle="0" dist="0">
         <properties>
           <Option type="Map">
@@ -11400,7 +11441,7 @@ def my_form_open(dialog, layer, feature):
       </spatialrefsys>
     </CoordinateCustomCrs>
   </ProjectDisplaySettings>
-  <ProjectGpsSettings autoCommitFeatures="0" destinationLayerSource="service='postgis1' key='id' estimatedmetadata=true srid=3857 type=Point checkPrimaryKeyUnicity='1' table=&quot;lizmap&quot;.&quot;observations&quot; (geom)" autoAddTrackVertices="0" destinationLayerProvider="postgres" destinationLayerName="observations Iconography test" destinationLayer="observations_4de508bd_7e7a_4919_9ac9_fb25587f6adc" destinationFollowsActiveLayer="1">
+  <ProjectGpsSettings autoCommitFeatures="0" destinationLayerSource="/Users/max/GitHub/py-qgis-server-local/projects/NRM_Test/Annual_Pipeline_Inspections/2024/2024_PhotoPoints.gpkg|layername=2024_PhotoPoints" autoAddTrackVertices="0" destinationLayerProvider="ogr" destinationLayerName="2024 Photos" destinationLayer="May_2024_Photo_Points_e105e1d8_2244_4655_8fcd_d0caa068f251" destinationFollowsActiveLayer="1">
     <timeStampFields/>
   </ProjectGpsSettings>
 </qgis>
