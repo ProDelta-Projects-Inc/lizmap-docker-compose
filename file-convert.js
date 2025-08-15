@@ -35,19 +35,50 @@ function mapSymbolCode(deficiency) {
   return 'other';
 }
 
-// Read CSV, process, and write new CSV
+// The exact order of columns in lizmap.observations (excluding geom)
+const tableColumnOrder = [
+  'id',
+  'portfolio_name',
+  'project_name',
+  'site_name',
+  'owner_organization',
+  'service_organization',
+  'data_source',
+  'inspection_date',
+  'deficiencies',
+  'description',
+  'symbol_code',
+  'lat',
+  'lon'
+];
+
 const rows = [];
 
 fs.createReadStream(inputCsv)
   .pipe(csv())
   .on('data', (row) => {
-    row.symbol_code = mapSymbolCode(row.Deficiencies);
-    rows.push(row);
+    // Normalize header names to lowercase for matching
+    const normalizedRow = {};
+    for (const key in row) {
+      normalizedRow[key.toLowerCase()] = row[key];
+    }
+
+    // Add symbol_code
+    normalizedRow.symbol_code = mapSymbolCode(normalizedRow.deficiencies);
+
+    rows.push(normalizedRow);
   })
   .on('end', () => {
-    const fields = Object.keys(rows[0]);
-    const opts = { fields };
-    const csvData = parse(rows, opts);
+    // Ensure all rows follow the table's column order
+    const orderedRows = rows.map(row =>
+      tableColumnOrder.reduce((acc, col) => {
+        acc[col] = row[col] || '';
+        return acc;
+      }, {})
+    );
+
+    const opts = { fields: tableColumnOrder };
+    const csvData = parse(orderedRows, opts);
     fs.writeFileSync(outputCsv, csvData);
     console.log(`✅ New CSV saved as ${outputCsv}`);
   });
