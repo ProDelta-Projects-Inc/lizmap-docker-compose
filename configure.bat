@@ -34,9 +34,11 @@ docker run -it --rm -v "%INSTALL_SOURCE%:/src" alpine ls -l /src
 echo.
 
 :: -------------------------------
-:: Run Lizmap Docker container
+:: Run Lizmap Docker container with debug output
 :: -------------------------------
-docker run -it -u 1000:1000 --rm ^
+echo Running configure.sh inside container...
+docker run -it --rm ^
+    -u 1000:1000 ^
     -e INSTALL_SOURCE=/install ^
     -e INSTALL_DEST=/lizmap ^
     -e "LIZMAP_DIR=%INSTALL_DEST%" ^
@@ -45,7 +47,8 @@ docker run -it -u 1000:1000 --rm ^
     -v "%INSTALL_DEST%:/lizmap" ^
     -v "%INSTALL_SOURCE%:/src" ^
     -v "%SCRIPTDIR%\qgis-data:/qgis-data" ^
-    3liz/qgis-map-server:%QGIS_VERSION_TAG% sh /src/configure.sh _configure
+    3liz/qgis-map-server:%QGIS_VERSION_TAG% ^
+    sh -x /src/configure.sh _configure
 
 :: -------------------------------
 :: Done

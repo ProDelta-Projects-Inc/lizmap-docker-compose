@@ -110,6 +110,8 @@ _install-plugin() {
 
 _configure() {
 
+    echo "Begin configuring"
+
     #
     # Create env file
     #
