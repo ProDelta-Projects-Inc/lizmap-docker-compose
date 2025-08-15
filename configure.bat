@@ -110,9 +110,11 @@ echo search_path=lizmap,public
 :: -------------------------------
 echo Installing Lizmap plugins in Docker container...
 docker run -it --rm ^
+    -u 1000:1000 ^
     -v "%INSTALL_DEST%:/lizmap" ^
-    "3liz/qgis-map-server:ltr-rc" ^
+    3liz/qgis-map-server:ltr-rc ^
     sh -c "qgis-plugin-manager init && qgis-plugin-manager update && qgis-plugin-manager install 'Lizmap server' && qgis-plugin-manager install atlasprint && qgis-plugin-manager install wfsOutputExtension"
+
 
 :: -------------------------------
 :: Done
