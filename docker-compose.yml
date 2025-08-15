@@ -134,7 +134,6 @@ services:
       default:
         aliases:
           - ${POSTGIS_ALIAS}
-
   node-exporter:
     image: prom/node-exporter:latest
     logging:

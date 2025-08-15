@@ -2,6 +2,11 @@
 # yarn lockfile v1
 
 
+"@streamparser/json@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@streamparser/json/-/json-0.0.6.tgz#6d5853197f52d765d99a23767c951c03676a0e27"
+  integrity sha512-vL9EVn/v+OhZ+Wcs6O4iKE9EUpwHUqHmCtNUMWjqp+6dr85+XPOSGTEsqYNq1Vn04uk9SWlOVmx9J48ggJVT2Q==
+
 asn1@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/asn1/-/asn1-0.2.6.tgz#0d3a7bb6e64e02a90c0303b31f292868ea09a08d"
@@ -26,6 +31,11 @@ buildcheck@~0.0.6:
   resolved "https://registry.yarnpkg.com/buildcheck/-/buildcheck-0.0.6.tgz#89aa6e417cfd1e2196e3f8fe915eb709d2fe4238"
   integrity sha512-8f9ZJCUXyT1M35Jx7MkBgmBMo3oHTTBIPLiY9xyL0pl3T5RwcPEY8cUHr5LBNfu/fk6c2T4DJZuVM/8ZZT2D2A==
 
+commander@^6.2.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-6.2.1.tgz#0792eb682dfbc325999bb2b84fddddba110ac73c"
+  integrity sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==
+
 concat-stream@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/concat-stream/-/concat-stream-2.0.0.tgz#414cf5af790a48c60ab9be4527d56d5e41133cb1"
@@ -44,6 +54,11 @@ cpu-features@~0.0.10:
     buildcheck "~0.0.6"
     nan "^2.19.0"
 
+csv-parser@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/csv-parser/-/csv-parser-3.2.0.tgz#7e5515e3763e963dc8660dc9dcfc3f0eaf72b0a9"
+  integrity sha512-fgKbp+AJbn1h2dcAHKIdKNSSjfp43BZZykXsCjzALjKy80VXQNHPFJ6T9Afwdzoj24aMkq8GwDS7KGcDPpejrA==
+
 dotenv@^17.2.1:
   version "17.2.1"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-17.2.1.tgz#6f32e10faf014883515538dc922a0fb8765d9b32"
@@ -53,6 +68,20 @@ inherits@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
+
+json2csv@^6.0.0-alpha.2:
+  version "6.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/json2csv/-/json2csv-6.0.0-alpha.2.tgz#ef859e8883a5db1077d784e302a79003c13c212f"
+  integrity sha512-nJ3oP6QxN8z69IT1HmrJdfVxhU1kLTBVgMfRnNZc37YEY+jZ4nU27rBGxT4vaqM/KUCavLRhntmTuBFqZLBUcA==
+  dependencies:
+    "@streamparser/json" "^0.0.6"
+    commander "^6.2.0"
+    lodash.get "^4.4.2"
+
+lodash.get@^4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/lodash.get/-/lodash.get-4.4.2.tgz#2d177f652fa31e939b4438d5341499dfa3825e99"
+  integrity sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==
 
 nan@^2.19.0, nan@^2.20.0:
   version "2.23.0"
