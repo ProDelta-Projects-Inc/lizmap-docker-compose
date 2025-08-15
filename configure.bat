@@ -4,40 +4,52 @@ setlocal ENABLEDELAYEDEXPANSION
 :: -------------------------------
 :: Define variables
 :: -------------------------------
+:: Make sure no trailing backslash
 set "SCRIPTDIR=%~dp0"
-set "INSTALL_DEST=%SCRIPTDIR%lizmap"
+if "%SCRIPTDIR:~-1%"=="\" set "SCRIPTDIR=%SCRIPTDIR:~0,-1%"
+
+set "INSTALL_DEST=%SCRIPTDIR%\lizmap"
 set "INSTALL_SOURCE=%SCRIPTDIR%"
 set "QGIS_VERSION_TAG=ltr-rc"
 
-:: -------------------------------
 :: Ensure install directory exists
-:: -------------------------------
 if not exist "%INSTALL_DEST%" mkdir "%INSTALL_DEST%"
 
 :: -------------------------------
 :: Fix line endings of configure.sh
 :: -------------------------------
-echo Converting configure.sh to LF line endings...
-powershell -Command "(Get-Content '%SCRIPTDIR%configure.sh') -replace \"`r`n\",\"`n\" | Set-Content -NoNewline '%SCRIPTDIR%configure.sh'"
+if exist "%SCRIPTDIR%\configure.sh" (
+    echo Converting configure.sh to LF line endings...
+    powershell -Command "(Get-Content '%SCRIPTDIR%\configure.sh') -replace \"`r`n\",\"`n\" | Set-Content -NoNewline '%SCRIPTDIR%\configure.sh'"
+) else (
+    echo [ERROR] configure.sh not found in %SCRIPTDIR%
+    exit /b 1
+)
 
 :: -------------------------------
-:: Run Docker container
+:: Test mount visibility (optional debug)
+:: -------------------------------
+echo Testing if configure.sh is visible inside container...
+docker run -it --rm -v "%INSTALL_SOURCE%:/src" alpine ls -l /src
+echo.
+
+:: -------------------------------
+:: Run Lizmap Docker container
 :: -------------------------------
 docker run -it -u 1000:1000 --rm ^
-  -e INSTALL_SOURCE=/install ^
-  -e INSTALL_DEST=/lizmap ^
-  -e "LIZMAP_DIR=C:\GitHub\lizmap-docker-compose\lizmap" ^
-  -e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins ^
-  -v "C:\GitHub\lizmap-docker-compose:/install" ^
-  -v "C:\GitHub\lizmap-docker-compose\lizmap:/lizmap" ^
-  -v "C:\GitHub\lizmap-docker-compose:/src" ^
-  3liz/qgis-map-server:ltr-rc sh /src/configure.sh _configure
-
+    -e INSTALL_SOURCE=/install ^
+    -e INSTALL_DEST=/lizmap ^
+    -e "LIZMAP_DIR=%INSTALL_DEST%" ^
+    -e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins ^
+    -v "%INSTALL_SOURCE%:/install" ^
+    -v "%INSTALL_DEST%:/lizmap" ^
+    -v "%INSTALL_SOURCE%:/src" ^
+    3liz/qgis-map-server:%QGIS_VERSION_TAG% sh /src/configure.sh _configure
 
 :: -------------------------------
 :: Done
 :: -------------------------------
 echo.
-echo Setup finished, you can now run:
+echo Setup finished. You can now run:
 echo docker-compose --env-file=.env.windows up
 endlocal
