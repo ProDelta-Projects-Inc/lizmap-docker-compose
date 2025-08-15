@@ -44,6 +44,7 @@ docker run -it -u 1000:1000 --rm ^
     -v "%INSTALL_SOURCE%:/install" ^
     -v "%INSTALL_DEST%:/lizmap" ^
     -v "%INSTALL_SOURCE%:/src" ^
+    -v "%SCRIPTDIR%\qgis-data:/qgis-data" ^
     3liz/qgis-map-server:%QGIS_VERSION_TAG% sh /src/configure.sh _configure
 
 :: -------------------------------
