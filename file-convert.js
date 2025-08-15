@@ -7,13 +7,13 @@ const { parse } = require('json2csv');
 const seedTarget = '001';
 
 // Input & output file paths
-const inputCsv = path.join(__dirname, 'db', 'seeds', seedTarget, `${seedTarget}.csv`);
+const inputCsv = path.join(__dirname, 'db', 'seeds', seedTarget, `${seedTarget}_original.csv`);
 const outputCsv = path.join(__dirname, 'db', 'seeds', seedTarget, `${seedTarget}_with_symbol_code.csv`);
 
 console.log(`Input CSV: ${inputCsv}`);
 console.log(`Output CSV: ${outputCsv}`);
 
-// Columns in the same order as Postgres table
+// Columns in the same order as Postgres table (excluding geom because staging drops it)
 const pgColumns = [
   'id',
   'portfolio_name',
@@ -22,16 +22,15 @@ const pgColumns = [
   'owner_organization',
   'service_organization',
   'data_source',
-  'inspection_date',
+  'date',
   'deficiencies',
   'description',
   'symbol_code',
   'lat',
-  'lon',
-  'geom'
+  'lon'
 ];
 
-// Mapping function
+// ---- helpers ----
 function mapSymbolCode(deficiency) {
   const text = (deficiency || '').toLowerCase();
   if (text.includes('erosion')) return 'erosion';
@@ -53,43 +52,103 @@ function mapSymbolCode(deficiency) {
   return 'other';
 }
 
-// Type formatting for Postgres
+// robust DATE -> YYYY-MM-DD
+function toISODate(value) {
+  const s = String(value || '').trim();
+  if (!s) return '';
+
+  // YYYY/MM/DD or YYYY-MM-DD
+  let m = s.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})$/);
+  if (m) {
+    const [, y, mo, d] = m;
+    return `${y}-${mo.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  }
+
+  // M/D/YYYY or MM-DD-YYYY
+  m = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (m) {
+    const [, mo, d, y] = m;
+    return `${y}-${mo.padStart(2, '0')}-${d.padStart(2, '0')}`;
+  }
+
+  // Fallback to Date parsing
+  const dt = new Date(s);
+  if (!isNaN(dt)) return dt.toISOString().slice(0, 10);
+
+  return '';
+}
+
 function formatForPostgres(column, value) {
-  if (value === undefined || value === null || value === '') return '';
+  const v = value === undefined || value === null ? '' : String(value).trim();
 
   switch (column) {
-    case 'id': // INTEGER
-      return parseInt(value, 10) || '';
-    case 'inspection_date': // DATE (YYYY-MM-DD)
-      return new Date(value).toISOString().split('T')[0];
-    case 'lat': // DOUBLE PRECISION
-    case 'lon':
-      return parseFloat(value) || '';
-    case 'geom': // GEOMETRY(Point, 3857) — leave empty, can be generated in SQL
-      return '';
-    default: // TEXT columns
-      return String(value).trim();
+    case 'id': {
+      const n = parseInt(v, 10);
+      return Number.isFinite(n) ? n : '';
+    }
+    case 'date':
+      return toISODate(v);
+    case 'lat':
+    case 'lon': {
+      const f = parseFloat(v);
+      return Number.isFinite(f) ? f : '';
+    }
+    default:
+      return v; // TEXT columns
   }
 }
 
+// pick first defined/non-empty from aliases
+function pick(row, ...keys) {
+  for (const k of keys) {
+    const val = row[k];
+    if (val !== undefined && val !== null && String(val).trim() !== '') return val;
+  }
+  return '';
+}
+
+// ---- processing ----
 const rows = [];
 
+// Normalize headers to lowercase once using mapHeaders.
+// This turns "Data_Source" -> "data_source", "Date" -> "date", etc.
 fs.createReadStream(inputCsv)
-  .pipe(csv())
+  .pipe(csv({ mapHeaders: ({ header }) => header.trim().toLowerCase() }))
   .on('data', (row) => {
-    const newRow = {};
-    pgColumns.forEach((col) => {
-      if (col === 'symbol_code') {
-        newRow[col] = mapSymbolCode(row.Deficiencies || row.deficiencies);
-      } else {
-        newRow[col] = formatForPostgres(col, row[col] || row[col?.toLowerCase()]);
-      }
-    });
-    rows.push(newRow);
+    // Build one output row in DB order, mapping aliases
+    const out = {};
+
+    out.id = formatForPostgres('id', pick(row, 'id'));
+    out.portfolio_name = formatForPostgres('portfolio_name', pick(row, 'portfolio_name'));
+    out.project_name = formatForPostgres('project_name', pick(row, 'project_name'));
+    out.site_name = formatForPostgres('site_name', pick(row, 'site_name'));
+    out.owner_organization = formatForPostgres('owner_organization', pick(row, 'owner_organization'));
+    out.service_organization = formatForPostgres('service_organization', pick(row, 'service_organization'));
+
+    // handles "Data_Source" -> "data_source"
+    out.data_source = formatForPostgres('data_source', pick(row, 'data_source', 'datasource', 'source'));
+
+    // handles "Date" -> "date"
+    out.date = formatForPostgres('date', pick(row, 'date', 'date'));
+
+    out.deficiencies = formatForPostgres('deficiencies', pick(row, 'deficiencies'));
+    out.description = formatForPostgres('description', pick(row, 'description', 'desc'));
+
+    // symbol_code derived from deficiencies
+    out.symbol_code = mapSymbolCode(out.deficiencies);
+
+    // coordinates (support aliases just in case)
+    out.lat = formatForPostgres('lat', pick(row, 'lat', 'latitude', 'y'));
+    out.lon = formatForPostgres('lon', pick(row, 'lon', 'longitude', 'x'));
+
+    rows.push(out);
   })
   .on('end', () => {
-    const opts = { fields: pgColumns };
-    const csvData = parse(rows, opts);
+    const csvData = parse(rows, { fields: pgColumns });
     fs.writeFileSync(outputCsv, csvData);
-    console.log(`✅ New CSV saved as ${outputCsv} with correct column order and Postgres-compatible types`);
+    console.log(`✅ New CSV saved as ${outputCsv}`);
+  })
+  .on('error', (err) => {
+    console.error('CSV read error:', err);
+    process.exit(1);
   });
