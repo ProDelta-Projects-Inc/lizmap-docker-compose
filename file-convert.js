@@ -13,6 +13,24 @@ const outputCsv = path.join(__dirname, 'db', 'seeds', seedTarget, `${seedTarget}
 console.log(`Input CSV: ${inputCsv}`);
 console.log(`Output CSV: ${outputCsv}`);
 
+// Columns in the same order as Postgres table
+const pgColumns = [
+  'id',
+  'portfolio_name',
+  'project_name',
+  'site_name',
+  'owner_organization',
+  'service_organization',
+  'data_source',
+  'inspection_date',
+  'deficiencies',
+  'description',
+  'symbol_code',
+  'lat',
+  'lon',
+  'geom'
+];
+
 // Mapping function
 function mapSymbolCode(deficiency) {
   const text = (deficiency || '').toLowerCase();
@@ -35,50 +53,43 @@ function mapSymbolCode(deficiency) {
   return 'other';
 }
 
-// The exact order of columns in lizmap.observations (excluding geom)
-const tableColumnOrder = [
-  'id',
-  'portfolio_name',
-  'project_name',
-  'site_name',
-  'owner_organization',
-  'service_organization',
-  'data_source',
-  'inspection_date',
-  'deficiencies',
-  'description',
-  'symbol_code',
-  'lat',
-  'lon'
-];
+// Type formatting for Postgres
+function formatForPostgres(column, value) {
+  if (value === undefined || value === null || value === '') return '';
+
+  switch (column) {
+    case 'id': // INTEGER
+      return parseInt(value, 10) || '';
+    case 'inspection_date': // DATE (YYYY-MM-DD)
+      return new Date(value).toISOString().split('T')[0];
+    case 'lat': // DOUBLE PRECISION
+    case 'lon':
+      return parseFloat(value) || '';
+    case 'geom': // GEOMETRY(Point, 3857) — leave empty, can be generated in SQL
+      return '';
+    default: // TEXT columns
+      return String(value).trim();
+  }
+}
 
 const rows = [];
 
 fs.createReadStream(inputCsv)
   .pipe(csv())
   .on('data', (row) => {
-    // Normalize header names to lowercase for matching
-    const normalizedRow = {};
-    for (const key in row) {
-      normalizedRow[key.toLowerCase()] = row[key];
-    }
-
-    // Add symbol_code
-    normalizedRow.symbol_code = mapSymbolCode(normalizedRow.deficiencies);
-
-    rows.push(normalizedRow);
+    const newRow = {};
+    pgColumns.forEach((col) => {
+      if (col === 'symbol_code') {
+        newRow[col] = mapSymbolCode(row.Deficiencies || row.deficiencies);
+      } else {
+        newRow[col] = formatForPostgres(col, row[col] || row[col?.toLowerCase()]);
+      }
+    });
+    rows.push(newRow);
   })
   .on('end', () => {
-    // Ensure all rows follow the table's column order
-    const orderedRows = rows.map(row =>
-      tableColumnOrder.reduce((acc, col) => {
-        acc[col] = row[col] || '';
-        return acc;
-      }, {})
-    );
-
-    const opts = { fields: tableColumnOrder };
-    const csvData = parse(orderedRows, opts);
+    const opts = { fields: pgColumns };
+    const csvData = parse(rows, opts);
     fs.writeFileSync(outputCsv, csvData);
-    console.log(`✅ New CSV saved as ${outputCsv}`);
+    console.log(`✅ New CSV saved as ${outputCsv} with correct column order and Postgres-compatible types`);
   });
