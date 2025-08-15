@@ -24,15 +24,15 @@ powershell -Command "(Get-Content '%SCRIPTDIR%configure.sh') -replace \"`r`n\",\
 :: Run Docker container
 :: -------------------------------
 docker run -it -u 1000:1000 --rm ^
-    -e INSTALL_SOURCE=/install ^
-    -e INSTALL_DEST=/lizmap ^
-    -e "LIZMAP_DIR=%INSTALL_DEST%" ^
-    -e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins ^
-    -v "%INSTALL_SOURCE%:/install" ^
-    -v "%INSTALL_DEST%:/lizmap" ^
-    -v "%INSTALL_SOURCE%:/src" ^
-    --entrypoint /src/configure.sh ^
-    3liz/qgis-map-server:%QGIS_VERSION_TAG% _configure
+  -e INSTALL_SOURCE=/install ^
+  -e INSTALL_DEST=/lizmap ^
+  -e "LIZMAP_DIR=C:\GitHub\lizmap-docker-compose\lizmap" ^
+  -e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins ^
+  -v "C:\GitHub\lizmap-docker-compose:/install" ^
+  -v "C:\GitHub\lizmap-docker-compose\lizmap:/lizmap" ^
+  -v "C:\GitHub\lizmap-docker-compose:/src" ^
+  3liz/qgis-map-server:ltr-rc sh /src/configure.sh _configure
+
 
 :: -------------------------------
 :: Done
