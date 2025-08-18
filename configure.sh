@@ -77,6 +77,13 @@ port=5432
 dbname=$POSTGRES_LIZMAP_DB
 user=$POSTGRES_LIZMAP_USER
 password=$POSTGRES_LIZMAP_PASSWORD
+
+[postgis1]
+host=$POSTGIS_ALIAS
+port=5432
+dbname=$POSTGRES_LIZMAP_DB
+user=$POSTGRES_LIZMAP_USER
+password=$POSTGRES_LIZMAP_PASSWORD
 EOF
     chmod 0600 $INSTALL_DEST/etc/pg_service.conf
 fi
