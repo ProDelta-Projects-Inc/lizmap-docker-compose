@@ -121,6 +121,34 @@ Run upload script:
 yarn upload
 ```
 
+## DB Migrations
+
+Allow access to db commands:
+
+```bash
+chmod +x db/rollback_migration.sh
+chmod +x db/run_migrations.sh
+chmod +x db/run_seed.sh
+```
+
+Run migrations:
+
+```bash
+./db/run_migrations.sh
+```
+
+Rollback single migration:
+
+```bash
+./db/rollback_migration.sh
+```
+
+Run seed:
+
+```bash
+./db/run_seed.sh 001
+```
+
 ## References
 
 For more information, refer to the [docker-compose documentation](https://docs.docker.com/compose/)
