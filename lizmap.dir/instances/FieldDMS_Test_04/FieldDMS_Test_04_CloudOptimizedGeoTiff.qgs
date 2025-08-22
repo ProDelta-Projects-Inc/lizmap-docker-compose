@@ -1,5 +1,5 @@
 <!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>
-<qgis saveUserFull="Max Halleran" projectname="FieldDMS_Test_04_CloudOptimizedGeoTiff" version="3.40.5-Bratislava" saveUser="max" saveDateTime="2025-08-22T15:12:52">
+<qgis saveUserFull="Max Halleran" projectname="FieldDMS_Test_04_CloudOptimizedGeoTiff" version="3.40.5-Bratislava" saveUser="max" saveDateTime="2025-08-22T15:17:10">
   <homePath path=""/>
   <title>FieldDMS_Test_04_CloudOptimizedGeoTiff</title>
   <transaction mode="Disabled"/>
@@ -62,7 +62,7 @@
         </customproperties>
       </layer-tree-layer>
     </layer-tree-group>
-    <layer-tree-layer id="_53713772_635c_41a4_b837_598bf8036f40" legend_exp="" name="Google Satellite Hybrid" expanded="1" patch_size="-1,-1" checked="Qt::Checked" source="http-header:referer=&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&amp;zmax=20&amp;zmin=0" providerKey="wms" legend_split_behavior="0">
+    <layer-tree-layer id="_53713772_635c_41a4_b837_598bf8036f40" legend_exp="" name="Google Satellite Hybrid" expanded="1" patch_size="-1,-1" checked="Qt::Checked" source="crs=EPSG:3857&amp;format&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&amp;zmax=20&amp;zmin=0&amp;http-header:referer=" providerKey="wms" legend_split_behavior="0">
       <customproperties>
         <Option/>
       </customproperties>
@@ -1187,7 +1187,7 @@
         <ymax>85.05112877980660357</ymax>
       </wgs84extent>
       <id>_53713772_635c_41a4_b837_598bf8036f40</id>
-      <datasource>http-header:referer=&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&amp;zmax=20&amp;zmin=0</datasource>
+      <datasource>crs=EPSG:3857&amp;format&amp;type=xyz&amp;url=https://mt1.google.com/vt/lyrs%3Dy%26x%3D%7Bx%7D%26y%3D%7By%7D%26z%3D%7Bz%7D&amp;zmax=20&amp;zmin=0&amp;http-header:referer=</datasource>
       <shortname>Google_Satellite_Hybrid</shortname>
       <keywordList>
         <value></value>
