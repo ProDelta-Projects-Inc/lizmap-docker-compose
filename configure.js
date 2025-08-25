@@ -16,19 +16,20 @@ const LIZMAP_VERSION_TAG = "3.9";
 const QGIS_VERSION_TAG = "ltr-rc";
 
 // Postgres defaults (adjust if needed)
-const POSTGIS_VERSION = process.env.POSTGIS_VERSION || "15";
+const POSTGIS_VERSION = process.env.POSTGIS_VERSION || "17-3";
 const POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD || "postgres";
 const POSTGRES_LIZMAP_DB = process.env.POSTGRES_LIZMAP_DB || "lizmap";
 const POSTGRES_LIZMAP_USER = process.env.POSTGRES_LIZMAP_USER || "lizmap";
-const POSTGRES_LIZMAP_PASSWORD = process.env.POSTGRES_LIZMAP_PASSWORD || "lizmap";
-const POSTGIS_ALIAS = process.env.POSTGIS_ALIAS || "postgis";
+const POSTGRES_LIZMAP_PASSWORD = process.env.POSTGRES_LIZMAP_PASSWORD || "lizmap1234!";
+const POSTGIS_ALIAS = process.env.POSTGIS_ALIAS || "db.lizmap";
 
 // Worker and port defaults
-const QGIS_MAP_WORKERS = process.env.QGIS_MAP_WORKERS || 2;
-const WPS_NUM_WORKERS = process.env.WPS_NUM_WORKERS || 2;
-const LIZMAP_PORT = process.env.LIZMAP_PORT || 8080;
-const OWS_PORT = process.env.OWS_PORT || 8081;
-const WPS_PORT = process.env.WPS_PORT || 8082;
+const QGIS_MAP_WORKERS = process.env.QGIS_MAP_WORKERS || 4;
+const WPS_NUM_WORKERS = process.env.WPS_NUM_WORKERS || 1;
+const LIZMAP_PORT = process.env.LIZMAP_PORT || "127.0.0.1:8090";
+const OWS_PORT = process.env.OWS_PORT || "127.0.0.1:8091";
+const WPS_PORT = process.env.WPS_PORT || "127.0.0.1:8092";
+const POSTGIS_PORT = process.env.POSTGIS_PORT || "127.0.0.1:5432";
 const COPY_COMPOSE_FILE = true; // optional: copy docker-compose.yml
 
 // ---------- Helpers ----------
@@ -87,7 +88,7 @@ WPS_NUM_WORKERS=${WPS_NUM_WORKERS}
 LIZMAP_PORT=${LIZMAP_PORT}
 OWS_PORT=${OWS_PORT}
 WPS_PORT=${WPS_PORT}
-POSTGIS_PORT=5432
+POSTGIS_PORT=${POSTGIS_PORT}
 POSTGIS_ALIAS=${POSTGIS_ALIAS}
 `.trim();
 
