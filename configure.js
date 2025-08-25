@@ -134,10 +134,8 @@ writeFileSafe(path.join(profileDir, "lizmap_local.ini.php"), lizmapProfile, 0o60
 // ---------- Step 5: Copy lizmap.dir files ----------
 
 const srcDir = path.join(installSource, "lizmap.dir");
-
 if (fs.existsSync(srcDir)) {
-  const ncp = require("fs-extra");
-  ncp.copySync(srcDir, installDest);
+  fs.cpSync(srcDir, installDest, { recursive: true });
 }
 
 // ---------- Step 6: Install Lizmap plugins in container ----------
