@@ -6,16 +6,15 @@ const { execSync } = require("child_process");
 
 // ---------- Configuration ----------
 
-// Script directory
 const scriptDir = __dirname;
 const installDest = path.join(scriptDir, "lizmap");
 const installSource = scriptDir;
 
-// Fixed version
+// Fixed versions
 const LIZMAP_VERSION_TAG = "3.9";
 const QGIS_VERSION_TAG = "ltr-rc";
 
-// Postgres defaults (adjust if needed)
+// Postgres defaults
 const POSTGIS_VERSION = process.env.POSTGIS_VERSION || "17-3";
 const POSTGRES_PASSWORD = process.env.POSTGRES_PASSWORD || "postgres";
 const POSTGRES_LIZMAP_DB = process.env.POSTGRES_LIZMAP_DB || "lizmap";
@@ -30,7 +29,8 @@ const LIZMAP_PORT = process.env.LIZMAP_PORT || "127.0.0.1:8090";
 const OWS_PORT = process.env.OWS_PORT || "127.0.0.1:8091";
 const WPS_PORT = process.env.WPS_PORT || "127.0.0.1:8092";
 const POSTGIS_PORT = process.env.POSTGIS_PORT || "127.0.0.1:5432";
-const COPY_COMPOSE_FILE = true; // optional: copy docker-compose.yml
+
+const COPY_COMPOSE_FILE = true; // copy docker-compose.yml
 
 // ---------- Helpers ----------
 
@@ -50,26 +50,7 @@ function toDockerPath(p) {
   return p;
 }
 
-// ---------- Step 1: Create directories ----------
-
-const dirs = [
-  "plugins",
-  "processing",
-  "wps-data",
-  "www",
-  "var/log/nginx",
-  "var/nginx-cache",
-  "var/lizmap-theme-config",
-  "var/lizmap-db",
-  "var/lizmap-config",
-  "var/lizmap-log",
-  "var/lizmap-modules",
-  "var/lizmap-my-packages"
-];
-
-dirs.forEach(d => mkdirSafe(path.join(installDest, d)));
-
-// ---------- Step 2: Create .env ----------
+// ---------- Step 1: Create .env ----------
 
 const envContent = `
 LIZMAP_PROJECTS=${path.join(installDest, "instances")}
@@ -94,7 +75,33 @@ POSTGIS_ALIAS=${POSTGIS_ALIAS}
 
 writeFileSafe(path.join(installDest, ".env"), envContent);
 
-// ---------- Step 3: Create pg_service.conf ----------
+// ---------- Step 2: Copy lizmap.dir files ----------
+
+const srcDir = path.join(installSource, "lizmap.dir");
+if (fs.existsSync(srcDir)) {
+  fs.cpSync(srcDir, installDest, { recursive: true });
+}
+
+// ---------- Step 3: Create directories ----------
+
+const dirs = [
+  "plugins",
+  "processing",
+  "wps-data",
+  "www",
+  "var/log/nginx",
+  "var/nginx-cache",
+  "var/lizmap-theme-config",
+  "var/lizmap-db",
+  "var/lizmap-config",
+  "var/lizmap-log",
+  "var/lizmap-modules",
+  "var/lizmap-my-packages"
+];
+
+dirs.forEach(d => mkdirSafe(path.join(installDest, d)));
+
+// ---------- Step 4: Create pg_service.conf ----------
 
 const pgServiceConf = `
 [lizmap_local]
@@ -114,7 +121,7 @@ password=${POSTGRES_LIZMAP_PASSWORD}
 
 writeFileSafe(path.join(installDest, "etc/pg_service.conf"), pgServiceConf, 0o600);
 
-// ---------- Step 4: Create lizmap profile ----------
+// ---------- Step 5: Create lizmap profile ----------
 
 const profileDir = path.join(installDest, "etc/profiles.d");
 mkdirSafe(profileDir);
@@ -132,31 +139,24 @@ search_path=lizmap,public
 
 writeFileSafe(path.join(profileDir, "lizmap_local.ini.php"), lizmapProfile, 0o600);
 
-// ---------- Step 5: Copy lizmap.dir files ----------
-
-const srcDir = path.join(installSource, "lizmap.dir");
-if (fs.existsSync(srcDir)) {
-  fs.cpSync(srcDir, installDest, { recursive: true });
-}
-
-// ---------- Step 6: Install Lizmap plugins in container ----------
+// ---------- Step 6: Install plugins inside Docker container ----------
 
 try {
   console.log("\n⚙️ Installing Lizmap plugins inside container...");
 
-  const dockerPluginCmd = [
+  const dockerCmd = [
     "docker run --rm -u 1000:1000",
+    `-e INSTALL_SOURCE=/install`,
+    `-e INSTALL_DEST=/lizmap`,
+    `-e LIZMAP_DIR=/lizmap`,
+    `-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins`,
     `-v "${toDockerPath(installDest)}:/lizmap"`,
     `-v "${toDockerPath(scriptDir)}:/src"`,
-    `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
-    "sh", "-c",
-    `"qgis-plugin-manager init && qgis-plugin-manager update && " +
-     "qgis-plugin-manager install 'Lizmap server' && " +
-     "qgis-plugin-manager install atlasprint && " +
-     "qgis-plugin-manager install wfsOutputExtension"`
+    `--entrypoint /src/install-lizmap-plugin.sh`,
+    `3liz/qgis-map-server:${QGIS_VERSION_TAG}`
   ].join(" ");
 
-  execSync(dockerPluginCmd, { stdio: "inherit", shell: true });
+  execSync(dockerCmd, { stdio: "inherit", shell: true });
   console.log("✅ Plugins installed successfully.");
 } catch (err) {
   console.error("❌ Error installing Lizmap plugins:", err.message);
