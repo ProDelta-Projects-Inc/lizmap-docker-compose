@@ -6,10 +6,14 @@
   "license": "MIT",
   "main": "./file-upload.js",
   "scripts": {
-    "upload": "node ./file-upload.js"
+    "upload": "node ./file-upload.js",
+    "configure": "cross-env LIZMAP_VERSION_TAG=3.9 node ./configure.js"
   },
   "dependencies": {
     "dotenv": "^17.2.1",
     "ssh2-sftp-client": "^12.0.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
