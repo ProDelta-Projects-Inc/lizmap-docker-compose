@@ -8,7 +8,7 @@ const scriptDir = __dirname;
 const installSource = scriptDir;
 const installDest = path.join(scriptDir, "lizmap");
 
-// Read version from env or fallback
+// Default version fallback
 const lizmapVersionTag = process.env.LIZMAP_VERSION_TAG || "3.9";
 const qgisVersionTag = process.env.QGIS_VERSION_TAG || "ltr-rc";
 
