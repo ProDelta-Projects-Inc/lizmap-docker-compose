@@ -95,7 +95,7 @@ services:
         keep-file: "true"
         mode: "non-blocking"
     volumes:
-      - { type: bind, source: "${LIZMAP_DIR}/etc/nginx.conf", target: /etc/nginx/nginx.conf }
+      - { type: bind, source: "${LIZMAP_DIR}/etc", target: /etc/nginx, read_only: true }
       - { type: bind, source: "${LIZMAP_DIR}/var/log/nginx", target: /var/log/nginx }
       - { type: bind, source: "${LIZMAP_DIR}/var/nginx-cache", target: /var/cache/nginx }
       - { type: bind, source: "${LIZMAP_DIR}", target: /srv/lizmap }
