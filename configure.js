@@ -140,11 +140,27 @@ if (fs.existsSync(srcDir)) {
   ncp.copySync(srcDir, installDest);
 }
 
-// ---------- Step 6: Install Lizmap plugin ----------
+// ---------- Step 6: Install Lizmap plugins in container ----------
 
-const pluginScript = path.join(installSource, "install-lizmap-plugin.sh");
-if (fs.existsSync(pluginScript)) {
-  console.log("⚠️ Skipping plugin install: You need to run install-lizmap-plugin.sh manually or port it to Node");
+try {
+  console.log("\n⚙️ Installing Lizmap plugins inside container...");
+
+  const dockerPluginCmd = [
+    "docker run --rm -u 1000:1000",
+    `-v "${toDockerPath(installDest)}:/lizmap"`,
+    `-v "${toDockerPath(scriptDir)}:/src"`,
+    `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
+    "sh", "-c",
+    `"qgis-plugin-manager init && qgis-plugin-manager update && " +
+     "qgis-plugin-manager install 'Lizmap server' && " +
+     "qgis-plugin-manager install atlasprint && " +
+     "qgis-plugin-manager install wfsOutputExtension"`
+  ].join(" ");
+
+  execSync(dockerPluginCmd, { stdio: "inherit", shell: true });
+  console.log("✅ Plugins installed successfully.");
+} catch (err) {
+  console.error("❌ Error installing Lizmap plugins:", err.message);
 }
 
 // ---------- Step 7: Copy docker-compose.yml ----------
