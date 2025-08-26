@@ -162,8 +162,10 @@ try {
     `-e INSTALL_DEST=/lizmap`,
     `-e LIZMAP_DIR=/lizmap`,
     `-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins`,
+    `-e QGSRV_CACHE_ROOTDIR=/qgis-data`, // explicit cache dir
     `-v "${toDockerPath(installDest)}:/lizmap"`,
     `-v "${toDockerPath(scriptDir)}:/src"`,
+    `-v "${toDockerPath(path.join(scriptDir, 'qgis-data'))}:/qgis-data"`, // mount writable host dir
     `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
     `sh -c "${pluginCommands}"`
   ].join(" ")
