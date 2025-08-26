@@ -168,7 +168,7 @@ try {
     }
   }
 
-  execSync(`chown -R ${LIZMAP_UID}:${LIZMAP_GID} ${pluginsDir}`)
+  // execSync(`chown -R ${LIZMAP_UID}:${LIZMAP_GID} ${pluginsDir}`)
 
   console.log("✅ Plugins installed locally.");
 } catch (err) {
