@@ -140,7 +140,6 @@ search_path=lizmap,public
 writeFileSafe(path.join(profileDir, "lizmap_local.ini.php"), lizmapProfile, 0o600);
 
 // ---------- Step 6: Install plugins inside Docker container ----------
-
 const plugins = [
   "Lizmap server",
   "atlasprint",
@@ -148,46 +147,33 @@ const plugins = [
 ]
 
 try {
-  console.log("\nInstalling Lizmap plugins inside container...");
+  console.log("\nInstalling Lizmap plugins inside container...")
 
-  // initialize + update plugin manager
-  const initAndUpdateCmd = [
+  // Combine all commands into a single shell command
+  const pluginCommands = [
+    "qgis-plugin-manager init",
+    "qgis-plugin-manager update",
+    ...plugins.map(p => `qgis-plugin-manager install "${p}"`)
+  ].join(" && ")
+
+  const dockerCmd = [
     "docker run --rm -u 1000:1000",
-    "-e INSTALL_SOURCE=/install",
-    "-e INSTALL_DEST=/lizmap",
-    "-e LIZMAP_DIR=/lizmap",
-    "-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins",
+    `-e INSTALL_SOURCE=/install`,
+    `-e INSTALL_DEST=/lizmap`,
+    `-e LIZMAP_DIR=/lizmap`,
+    `-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins`,
     `-v "${toDockerPath(installDest)}:/lizmap"`,
     `-v "${toDockerPath(scriptDir)}:/src"`,
-    `--entrypoint qgis-plugin-manager`,
     `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
-    "init && qgis-plugin-manager update"
-  ].join(" ");
+    `sh -c "${pluginCommands}"`
+  ].join(" ")
 
-  execSync(initAndUpdateCmd, { stdio: "inherit", shell: true });
+  execSync(dockerCmd, { stdio: "inherit", shell: true })
 
-  // install each plugin separately
-  for (const plugin of plugins) {
-    const pluginCmd = [
-      "docker run --rm -u 1000:1000",
-      "-e INSTALL_SOURCE=/install",
-      "-e INSTALL_DEST=/lizmap",
-      "-e LIZMAP_DIR=/lizmap",
-      "-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins",
-      `-v "${toDockerPath(installDest)}:/lizmap"`,
-      `-v "${toDockerPath(scriptDir)}:/src"`,
-      `--entrypoint qgis-plugin-manager`,
-      `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
-      `install "${plugin}"`
-    ].join(" ");
-
-    execSync(pluginCmd, { stdio: "inherit", shell: true });
-  }
-
-  console.log("✅ Plugins installed successfully.");
+  console.log("✅ Plugins installed successfully.")
 } catch (err) {
-  console.error("❌ Error installing Lizmap plugins:", err.message);
-  process.exit(1);
+  console.error("❌ Error installing Lizmap plugins:", err.message)
+  process.exit(1)
 }
 
 // ---------- Step 7: Copy docker-compose.yml ----------
