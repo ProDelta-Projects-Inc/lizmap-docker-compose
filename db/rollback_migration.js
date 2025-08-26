@@ -13,8 +13,8 @@ const MIGRATIONS_DIR = path.join(__dirname, 'migrations');
 function runCommand(command, input = null) {
   try {
     return execSync(command, {
-      stdio: input ? ['pipe', 'pipe', 'pipe'] : 'inherit',
-      input: input ? input : undefined,
+      stdio: ['pipe', 'pipe', 'pipe'], // always capture stdout/stderr
+      input: input || undefined,
       encoding: 'utf8',
     }).trim();
   } catch (err) {
@@ -27,7 +27,7 @@ function runCommand(command, input = null) {
 
 function getLastAppliedMigration() {
   const cmd = `docker exec -i ${POSTGIS_CONTAINER} psql -t -U ${DB_USER} -d ${DB_NAME} -c "SELECT version FROM lizmap.schema_migrations ORDER BY version DESC LIMIT 1;"`;
-  const result = runCommand(cmd);
+  const result = runCommand(cmd).replace(/\s+/g, '');
   return result === '' ? null : result;
 }
 
