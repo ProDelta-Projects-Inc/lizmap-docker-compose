@@ -22,6 +22,12 @@ const POSTGRES_LIZMAP_USER = process.env.POSTGRES_LIZMAP_USER || "lizmap"
 const POSTGRES_LIZMAP_PASSWORD = process.env.POSTGRES_LIZMAP_PASSWORD || "lizmap1234!"
 const POSTGIS_ALIAS = process.env.POSTGIS_ALIAS || "db.lizmap"
 
+// Env defaults || Use env values if set, otherwise get current user/group ID
+const LIZMAP_UID = process.env.LIZMAP_UID || (process.getuid ? process.getuid() : 1000);
+const LIZMAP_GID = process.env.LIZMAP_GID || (process.getgid ? process.getgid() : 1000);
+
+console.log(`Using UID:GID = ${LIZMAP_UID}:${LIZMAP_GID}`);
+
 // Worker and port defaults
 const QGIS_MAP_WORKERS = process.env.QGIS_MAP_WORKERS || 4
 const WPS_NUM_WORKERS = process.env.WPS_NUM_WORKERS || 1
@@ -55,8 +61,8 @@ function toDockerPath(p) {
 const envContent = `
 LIZMAP_PROJECTS=${path.join(installDest, "instances")}
 LIZMAP_DIR=${installDest}
-LIZMAP_UID=${process.getuid ? process.getuid() : 1000}
-LIZMAP_GID=${process.getgid ? process.getgid() : 1000}
+LIZMAP_UID=${LIZMAP_UID}
+LIZMAP_GID=${LIZMAP_GID}
 LIZMAP_VERSION_TAG=${LIZMAP_VERSION_TAG}
 QGIS_VERSION_TAG=${QGIS_VERSION_TAG}
 POSTGIS_VERSION=${POSTGIS_VERSION}
@@ -161,6 +167,8 @@ try {
       console.log(`✔ Plugin ${name} already present`);
     }
   }
+
+  execSync(`chown -R ${LIZMAP_UID}:${LIZMAP_GID} ${target}`);
 
   console.log("✅ Plugins installed locally.");
 } catch (err) {
