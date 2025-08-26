@@ -141,25 +141,53 @@ writeFileSafe(path.join(profileDir, "lizmap_local.ini.php"), lizmapProfile, 0o60
 
 // ---------- Step 6: Install plugins inside Docker container ----------
 
-try {
-  console.log("\n⚙️ Installing Lizmap plugins inside container...");
+const plugins = [
+  "Lizmap server",
+  "atlasprint",
+  "wfsOutputExtension"
+]
 
-  const dockerCmd = [
+try {
+  console.log("\nInstalling Lizmap plugins inside container...");
+
+  // initialize + update plugin manager
+  const initAndUpdateCmd = [
     "docker run --rm -u 1000:1000",
-    `-e INSTALL_SOURCE=/install`,
-    `-e INSTALL_DEST=/lizmap`,
-    `-e LIZMAP_DIR=/lizmap`,
-    `-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins`,
+    "-e INSTALL_SOURCE=/install",
+    "-e INSTALL_DEST=/lizmap",
+    "-e LIZMAP_DIR=/lizmap",
+    "-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins",
     `-v "${toDockerPath(installDest)}:/lizmap"`,
     `-v "${toDockerPath(scriptDir)}:/src"`,
-    `--entrypoint /src/install-lizmap-plugin.sh`,
-    `3liz/qgis-map-server:${QGIS_VERSION_TAG}`
+    `--entrypoint qgis-plugin-manager`,
+    `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
+    "init && qgis-plugin-manager update"
   ].join(" ");
 
-  execSync(dockerCmd, { stdio: "inherit", shell: true });
+  execSync(initAndUpdateCmd, { stdio: "inherit", shell: true });
+
+  // install each plugin separately
+  for (const plugin of plugins) {
+    const pluginCmd = [
+      "docker run --rm -u 1000:1000",
+      "-e INSTALL_SOURCE=/install",
+      "-e INSTALL_DEST=/lizmap",
+      "-e LIZMAP_DIR=/lizmap",
+      "-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins",
+      `-v "${toDockerPath(installDest)}:/lizmap"`,
+      `-v "${toDockerPath(scriptDir)}:/src"`,
+      `--entrypoint qgis-plugin-manager`,
+      `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
+      `install "${plugin}"`
+    ].join(" ");
+
+    execSync(pluginCmd, { stdio: "inherit", shell: true });
+  }
+
   console.log("✅ Plugins installed successfully.");
 } catch (err) {
   console.error("❌ Error installing Lizmap plugins:", err.message);
+  process.exit(1);
 }
 
 // ---------- Step 7: Copy docker-compose.yml ----------
