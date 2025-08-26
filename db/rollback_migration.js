@@ -8,7 +8,7 @@ const path = require('path');
 const DB_NAME = 'lizmap';
 const DB_USER = 'lizmap';
 const POSTGIS_CONTAINER = 'postgis-1';
-const MIGRATIONS_DIR = path.join(__dirname, 'db', 'migrations');
+const MIGRATIONS_DIR = path.join(__dirname, 'migrations');
 
 function runCommand(command, input = null) {
   try {
