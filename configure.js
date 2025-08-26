@@ -140,42 +140,32 @@ search_path=lizmap,public
 writeFileSafe(path.join(profileDir, "lizmap_local.ini.php"), lizmapProfile, 0o600)
 
 // ---------- Step 6: Install plugins inside Docker container ----------
-const plugins = [
-  "Lizmap server",
-  "atlasprint",
-  "wfsOutputExtension"
-]
+
+const pluginsDir = path.join(installDest, "plugins");
+mkdirSafe(pluginsDir);
 
 try {
-  console.log("\nInstalling Lizmap plugins inside container...")
+  console.log("\nInstalling Lizmap plugins into:", pluginsDir);
 
-  // Combine all commands into a single shell command
-  const pluginCommands = [
-    "qgis-plugin-manager init",
-    "qgis-plugin-manager update",
-    ...plugins.map(p => `qgis-plugin-manager install "${p}"`)
-  ].join(" && ")
+  const repos = {
+    "lizmap_server": "https://github.com/3liz/qgis-lizmap-server-plugin.git",
+    "atlasprint": "https://github.com/3liz/qgis-atlasprint.git",
+    "wfsOutputExtension": "https://github.com/3liz/qgis-wfsOutputExtension.git"
+  };
 
-  const dockerCmd = [
-    "docker run --rm -u 1000:1000",
-    `-e INSTALL_SOURCE=/install`,
-    `-e INSTALL_DEST=/lizmap`,
-    `-e LIZMAP_DIR=/lizmap`,
-    `-e QGSRV_SERVER_PLUGINPATH=/lizmap/plugins`,
-    `-e QGSRV_CACHE_ROOTDIR=/qgis-data`, // explicit cache dir
-    `-v "${toDockerPath(installDest)}:/lizmap"`,
-    `-v "${toDockerPath(scriptDir)}:/src"`,
-    `-v "${toDockerPath(path.join(scriptDir, 'qgis-data'))}:/qgis-data"`, // mount writable host dir
-    `3liz/qgis-map-server:${QGIS_VERSION_TAG}`,
-    `sh -c "${pluginCommands}"`
-  ].join(" ")
+  for (const [name, repo] of Object.entries(repos)) {
+    const target = path.join(pluginsDir, name);
+    if (!fs.existsSync(target)) {
+      execSync(`git clone --depth 1 ${repo} ${target}`, { stdio: "inherit" });
+    } else {
+      console.log(`✔ Plugin ${name} already present`);
+    }
+  }
 
-  execSync(dockerCmd, { stdio: "inherit", shell: true })
-
-  console.log("✅ Plugins installed successfully.")
+  console.log("✅ Plugins installed locally.");
 } catch (err) {
-  console.error("❌ Error installing Lizmap plugins:", err.message)
-  process.exit(1)
+  console.error("❌ Error installing Lizmap plugins:", err.message);
+  process.exit(1);
 }
 
 // ---------- Step 7: Copy docker-compose.yml ----------
