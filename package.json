@@ -7,10 +7,12 @@
   "main": "./file-upload.js",
   "scripts": {
     "upload": "node ./file-upload.js",
-    "configure": "cross-env LIZMAP_VERSION_TAG=3.9 node ./configure.js"
+    "configure": "cross-env LIZMAP_VERSION_TAG=3.9 node ./configure.js",
+    "init:lizmap": "node ./docker/postgis/001_init-lizmap-db.js && node ./docker/postgis/002_init-schema-migrations.js"
   },
   "dependencies": {
     "dotenv": "^17.2.1",
+    "pg": "^8.11.0",
     "ssh2-sftp-client": "^12.0.1"
   },
   "devDependencies": {
