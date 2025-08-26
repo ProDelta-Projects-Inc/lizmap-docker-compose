@@ -13,8 +13,8 @@ const MIGRATIONS_DIR = path.join(__dirname, 'migrations');
 function runCommand(command, input = null) {
   try {
     return execSync(command, {
-      stdio: input ? ['pipe', 'pipe', 'pipe'] : 'inherit',
-      input: input ? input : undefined,
+      stdio: input ? ['pipe', 'pipe', 'pipe'] : ['pipe', 'pipe', 'pipe'], // always capture stdout/stderr
+      input: input || undefined,
       encoding: 'utf8',
     }).trim();
   } catch (err) {
@@ -24,6 +24,7 @@ function runCommand(command, input = null) {
     process.exit(1);
   }
 }
+
 
 function getMigrationFiles() {
   return fs
@@ -40,7 +41,7 @@ function getMigrationVersion(filePath) {
 function migrationAlreadyApplied(version) {
   const cmd = `docker exec -i ${POSTGIS_CONTAINER} psql -t -U ${DB_USER} -d ${DB_NAME} -c "SELECT 1 FROM lizmap.schema_migrations WHERE version = '${version}';"`;
   const result = runCommand(cmd);
-  return result !== '';
+  return result.replace(/\s+/g, '') === '1';
 }
 
 function applyMigration(filePath, version) {
