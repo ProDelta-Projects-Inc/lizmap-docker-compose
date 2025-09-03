@@ -9,7 +9,7 @@
     "upload": "node ./file-upload.js"
   },
   "dependencies": {
-    "dotenv": "^17.2.1",
+    "dotenv": "^17.2.2",
     "ssh2-sftp-client": "^12.0.1"
   }
 }
