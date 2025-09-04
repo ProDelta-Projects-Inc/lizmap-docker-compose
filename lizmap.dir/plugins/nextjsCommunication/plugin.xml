@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://www.jelix.org/ns/plugins/1.0">
+    <info id="nextjsCommunication" name="nextjsCommunication" createdate="2024-03-01">
+        <version>1.0.0</version>
+        <label lang="en_US">NextJS Cross-Origin Communication</label>
+        <label lang="fr_FR">Communication Cross-Origin NextJS</label>
+        <description lang="en_US">Enables secure cross-origin communication between Lizmap and NextJS applications via postMessage API</description>
+        <description lang="fr_FR">Active la communication cross-origin sécurisée entre Lizmap et les applications NextJS via l'API postMessage</description>
+        <author name="ProDelta" email="max.halleran@prodelta.ca"/>
+        <license>MIT</license>
+        <homepage>https://github.com/ProDelta-Projects-Inc/lizmap-nextjs-communication</homepage>
+    </info>
+    <dependencies>
+        <jelix minversion="1.6.0" maxversion="1.8.*"/>
+    </dependencies>
+</plugin>

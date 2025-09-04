@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://jelix.org/ns/module/1.0">
+    <info id="nextjsCommunication" name="nextjsCommunication">
+        <version>1.0.0</version>
+        <label lang="en_US">NextJS Communication Admin</label>
+        <label lang="fr_FR">Administration Communication NextJS</label>
+        <description lang="en_US">Administration interface for NextJS cross-origin communication plugin</description>
+        <description lang="fr_FR">Interface d'administration pour le plugin de communication cross-origin NextJS</description>
+    </info>
+
+    <dependencies>
+        <module name="jauth" minversion="1.6.0" />
+        <module name="jacl2" minversion="1.6.0" />
+    </dependencies>
+
+    <autoload>
+        <dir>classes</dir>
+    </autoload>
+</module>

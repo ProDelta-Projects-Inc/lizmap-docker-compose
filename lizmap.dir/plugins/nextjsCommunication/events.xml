@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<events xmlns="http://jelix.org/ns/events/1.0">
+    <!-- Map additions event - triggered when map is being built -->
+    <listener name="nextjsCommunication">
+        <event name="getMapAdditions" />
+    </listener>
+
+    <!-- Map dock event - triggered for dock additions -->
+    <listener name="nextjsCommunication">
+        <event name="mapDockable" />
+    </listener>
+
+    <!-- Response event - for adding headers -->
+    <listener name="nextjsCommunication">
+        <event name="LizmapMapGetResponse" />
+    </listener>
+
+    <!-- Project config event - for configuration changes -->
+    <listener name="nextjsCommunication">
+        <event name="lizmapproxyConfigParsed" />
+    </listener>
+</events>
+
