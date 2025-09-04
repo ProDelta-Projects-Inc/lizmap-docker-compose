@@ -1,3 +1,4 @@
+import os
 from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt.QtCore import QObject
 
@@ -30,9 +31,3 @@ class TestPlugin:
             "TestPlugin",
             Qgis.Info
         )
-
-# ==== Optional: For server-side processing ====
-def serverClassFactory(serverIface):
-    """Load plugin for QGIS Server"""
-    from .test_plugin import TestPlugin
-    return TestPlugin(serverIface)
