@@ -1,0 +1,13 @@
+[general]
+name=Test Plugin
+qgisMinimumVersion=3.0
+description=Minimal test plugin for LizMap/QGIS
+version=1.0.0
+author=Test Author
+email=test@example.com
+
+# Make it compatible with QGIS Server
+server=True
+
+# LizMap specific (optional)
+hasProcessingProvider=no
