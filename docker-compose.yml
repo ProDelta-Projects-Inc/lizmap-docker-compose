@@ -1,4 +1,36 @@
 services:
+  # Plugin installer init container
+  nextjs-plugin-installer:
+    build:
+      context: .
+      dockerfile: Dockerfile.plugin-installer
+    volumes:
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-config',
+          target: /www/lizmap/var/config,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-modules',
+          target: /www/lizmap/lizmap-modules,
+        }
+      # Mount plugins directory (create if it doesn't exist)
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/plugins',
+          target: /www/lizmap/lizmap/plugins,
+        }
+    environment:
+      - PLUGIN_ENABLED=${LIZMAP_NEXTJS_PLUGIN_ENABLED:-true}
+      - CORS_ORIGINS=${LIZMAP_NEXTJS_CORS_ORIGINS:-https://localhost:3000}
+      - DEBUG_MODE=${LIZMAP_NEXTJS_DEBUG:-false}
+      - TIMEOUT=${LIZMAP_NEXTJS_TIMEOUT:-15000}
+    restart: 'no'
+    depends_on:
+      postgis:
+        condition: service_healthy
+
   lizmap:
     image: 3liz/lizmap-web-client:${LIZMAP_VERSION_TAG}
     logging:
@@ -8,8 +40,8 @@ services:
         loki-retries: 2
         loki-max-backoff: 800ms
         loki-timeout: 1s
-        keep-file: "true"
-        mode: "non-blocking"
+        keep-file: 'true'
+        mode: 'non-blocking'
     environment:
       LIZMAP_CACHEREDISDB: '1'
       LIZMAP_CACHEREDISHOST: redis
@@ -20,22 +52,75 @@ services:
       LIZMAP_CONFIG_INCLUDE: /srv/etc
       PGSERVICEFILE: /srv/etc/pg_service.conf
       PGPASSFILE: /srv/etc/pgpass.conf
+      # Plugin-specific environment variables
+      LIZMAP_NEXTJS_PLUGIN_ENABLED: ${LIZMAP_NEXTJS_PLUGIN_ENABLED:-true}
+      LIZMAP_NEXTJS_CORS_ORIGINS: ${LIZMAP_NEXTJS_CORS_ORIGINS:-https://localhost:3000}
+      LIZMAP_NEXTJS_DEBUG: ${LIZMAP_NEXTJS_DEBUG:-false}
     volumes:
-      - { type: bind, source: "${LIZMAP_PROJECTS}", target: /srv/projects }
-      - { type: bind, source: "${LIZMAP_DIR}/var/lizmap-theme-config", target: /www/lizmap/var/lizmap-theme-config }
-      - { type: bind, source: "${LIZMAP_DIR}/var/lizmap-config", target: /www/lizmap/var/config }
-      - { type: bind, source: "${LIZMAP_DIR}/var/lizmap-db", target: /www/lizmap/var/db }
-      - { type: bind, source: "${LIZMAP_DIR}/var/lizmap-log", target: /www/lizmap/var/log }
-      - { type: bind, source: "${LIZMAP_DIR}/www", target: /www/lizmap/www }
-      - { type: bind, source: "${LIZMAP_DIR}/var/lizmap-modules", target: /www/lizmap/lizmap-modules }
-      - { type: bind, source: "${LIZMAP_DIR}/var/lizmap-my-packages", target: /www/lizmap/my-packages }
-      - { type: bind, source: "${LIZMAP_DIR}/etc", target: /srv/etc, read_only: true }
+      - { type: bind, source: '${LIZMAP_PROJECTS}', target: /srv/projects }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-theme-config',
+          target: /www/lizmap/var/lizmap-theme-config,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-config',
+          target: /www/lizmap/var/config,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-db',
+          target: /www/lizmap/var/db,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-log',
+          target: /www/lizmap/var/log,
+        }
+      - { type: bind, source: '${LIZMAP_DIR}/www', target: /www/lizmap/www }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-modules',
+          target: /www/lizmap/lizmap-modules,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/lizmap-my-packages',
+          target: /www/lizmap/my-packages,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/etc',
+          target: /srv/etc,
+          read_only: true,
+        }
+      # Add plugins directory mount
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/plugins',
+          target: /www/lizmap/lizmap/plugins,
+        }
     command:
       - php-fpm
     depends_on:
+      nextjs-plugin-installer:
+        condition: service_completed_successfully
       postgis:
         condition: service_healthy
     restart: unless-stopped
+    # Add health check to verify plugin installation
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'test -f /www/lizmap/lizmap/plugins/nextjsCommunication/plugin.xml && curl -f http://localhost/lizmap/plugins/nextjsCommunication/www/js/lizmap-communication.js || exit 1',
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
   map:
     image: 3liz/qgis-map-server:${QGIS_VERSION_TAG}
     logging:
@@ -45,8 +130,8 @@ services:
         loki-retries: 2
         loki-max-backoff: 800ms
         loki-timeout: 1s
-        keep-file: "true"
-        mode: "non-blocking"
+        keep-file: 'true'
+        mode: 'non-blocking'
     environment:
       PGSERVICEFILE: /srv/etc/pg_service.conf
       PGSPASSFILE: /srv/etc/pgpass.conf
@@ -62,13 +147,19 @@ services:
       QGSRV_SERVER_RESTARTMON: /srv/.qgis-restart
       QGSRV_SERVER_WORKERS: ${QGIS_MAP_WORKERS}
     volumes:
-      - { type: bind, source: "${LIZMAP_PROJECTS}", target: /srv/projects }
-      - { type: bind, source: "${LIZMAP_DIR}/plugins", target: /srv/plugins }
-      - { type: bind, source: "${LIZMAP_DIR}/wps-data", target: /srv/data }
-      - { type: bind, source: "${LIZMAP_DIR}/etc", target: /srv/etc, read_only: true }
+      - { type: bind, source: '${LIZMAP_PROJECTS}', target: /srv/projects }
+      - { type: bind, source: '${LIZMAP_DIR}/plugins', target: /srv/plugins }
+      - { type: bind, source: '${LIZMAP_DIR}/wps-data', target: /srv/data }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/etc',
+          target: /srv/etc,
+          read_only: true,
+        }
     ports:
       - ${OWS_PORT}:8080
     restart: unless-stopped
+
   redis:
     image: redis:5-alpine
     logging:
@@ -78,10 +169,11 @@ services:
         loki-retries: 2
         loki-max-backoff: 800ms
         loki-timeout: 1s
-        keep-file: "true"
-        mode: "non-blocking"
+        keep-file: 'true'
+        mode: 'non-blocking'
     volumes:
       - { type: volume, source: redis_data, target: /data }
+
   web:
     image: nginx:alpine
     user: ${LIZMAP_UID}:${LIZMAP_GID}
@@ -92,17 +184,30 @@ services:
         loki-retries: 2
         loki-max-backoff: 800ms
         loki-timeout: 1s
-        keep-file: "true"
-        mode: "non-blocking"
+        keep-file: 'true'
+        mode: 'non-blocking'
     volumes:
-      - { type: bind, source: "${LIZMAP_DIR}/etc/nginx.conf", target: /etc/nginx/nginx.conf }
-      - { type: bind, source: "${LIZMAP_DIR}/var/log/nginx", target: /var/log/nginx }
-      - { type: bind, source: "${LIZMAP_DIR}/var/nginx-cache", target: /var/cache/nginx }
-      - { type: bind, source: "${LIZMAP_DIR}", target: /srv/lizmap }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/etc/nginx.conf',
+          target: /etc/nginx/nginx.conf,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/log/nginx',
+          target: /var/log/nginx,
+        }
+      - {
+          type: bind,
+          source: '${LIZMAP_DIR}/var/nginx-cache',
+          target: /var/cache/nginx,
+        }
+      - { type: bind, source: '${LIZMAP_DIR}', target: /srv/lizmap }
     ports:
       - ${LIZMAP_PORT}:8080
     depends_on:
       - lizmap
+
   postgis:
     build:
       context: ./docker/postgis
@@ -114,8 +219,8 @@ services:
         loki-retries: 2
         loki-max-backoff: 800ms
         loki-timeout: 1s
-        keep-file: "true"
-        mode: "non-blocking"
+        keep-file: 'true'
+        mode: 'non-blocking'
     volumes:
       - { type: volume, source: postgis_data, target: /var/lib/postgresql/data }
     environment:
@@ -126,7 +231,11 @@ services:
     ports:
       - ${POSTGIS_PORT}:5432
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d ${POSTGRES_LIZMAP_DB} -q || exit 1" ]
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U postgres -d ${POSTGRES_LIZMAP_DB} -q || exit 1',
+        ]
       interval: 10s
       timeout: 5s
       start_period: 60s
@@ -144,21 +253,22 @@ services:
         loki-retries: 2
         loki-max-backoff: 800ms
         loki-timeout: 1s
-        keep-file: "true"
-        mode: "non-blocking"
+        keep-file: 'true'
+        mode: 'non-blocking'
     ports:
       - 9100:9100
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-    command: [
-      "--path.procfs=/host/proc",
-      "--path.rootfs=/rootfs",
-      "--path.sysfs=/host/sys",
-      "--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)",
-      "--collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)",
-    ]
+    command:
+      [
+        '--path.procfs=/host/proc',
+        '--path.rootfs=/rootfs',
+        '--path.sysfs=/host/sys',
+        '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)',
+        '--collector.filesystem.ignored-fs-types=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|sysfs|tracefs)',
+      ]
 
 volumes:
   postgis_data:
