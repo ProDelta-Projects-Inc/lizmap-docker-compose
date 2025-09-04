@@ -37,7 +37,7 @@ Run lizmap:
 
 ```bash
 docker compose pull
-docker compose up
+docker compose up -d
 ```
 
 To run lizmap visible to another system, prefix the docker command with a variable. NB! This will be plain HTTP with no encryption and not suitable for production.
